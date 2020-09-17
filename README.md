@@ -1,2 +1,3 @@
 # Avalanche.swift
-The Avalanche Platform Swift Library
+
+A description of this package.
