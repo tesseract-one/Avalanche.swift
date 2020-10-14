@@ -36,7 +36,7 @@ public class AvalanchePChainApiInfo: AvalancheBaseApiInfo {
         super.init(bId: bId, alias: alias, vm: vm)
     }
     
-    public var apiPath: String {
+    override public var apiPath: String {
         return "/ext/\(alias ?? blockchainId)"
     }
 }

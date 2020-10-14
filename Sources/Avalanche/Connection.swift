@@ -16,7 +16,7 @@ public protocol AvalancheConnectionFactory {
     
     func restConnection(for path: String) -> AvalancheRestConnection
     func httpRpcConnection(for path: String) -> AvalancheRpcConnection
-    func wsRpcConnection(for path: String) -> AvalancheRpcConnection
+    func wsRpcConnection(for path: String) -> AvalancheSubscribableRpcConnection
 }
 
 public enum AvalancheConnectionError: Error {
@@ -57,11 +57,15 @@ public protocol AvalancheRpcConnection {
     init(url: URL, headers: Dictionary<String, String>, responseQueue: DispatchQueue)
     
     func call<Params: Encodable, Res: Decodable>(
-        method: String, params: Params,
+        method: String, params: Params, _ res: Res.Type,
         result: @escaping AvalancheConnectionCallback<Res>
     )
 }
 
-public protocol AvalancheJsonRpcConnection: AvalancheRpcConnection {
-    var jsonRpcVersion: String { get set }
+public protocol AvalancheSubscribableRpcConnection: AvalancheRpcConnection {
+    func subscribe(listener: @escaping (Data, AvalancheSubscribableRpcConnection) -> Void) -> UInt
+    func unsubscribe(id: UInt)
+    
+    // Method for incoming event parsing.
+    func parseInfo<P: Decodable>(from message: Data, _ params: P.Type) throws -> (method: String, params: P)
 }

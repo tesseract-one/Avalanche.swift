@@ -19,11 +19,14 @@ public protocol AvalancheKeychain {
         message: Data, address: AvalancheAddress,
         response: @escaping AvalancheKeychainCallback<Data>
     )
+    func signTx(
+        tx: Any, address: AvalancheAddress,
+        response: @escaping AvalancheKeychainCallback<Any>
+    )
     func verify(
         message: Data, signature: Data, address: AvalancheAddress,
         response: @escaping AvalancheKeychainCallback<Bool>
     )
-    
     func mutate<R>(mutator: @escaping (AvalancheKeychainMutator) throws -> R) throws -> R
 }
 
@@ -33,22 +36,18 @@ public protocol AvalancheEthereumKeychain {
         message: Data, address: Data,
         response: @escaping AvalancheKeychainCallback<Data>
     )
-    
     func signTx(
         tx: Any, address: Data,
         response: @escaping AvalancheKeychainCallback<Data>
     )
-    
     func signTypedData(
         tx: Any, address: Data,
         response: @escaping AvalancheKeychainCallback<Data>
     )
-    
     func verify(
         message: Data, signature: Data, address: Data,
         response: @escaping AvalancheKeychainCallback<Bool>
     )
-    
     func mutate<R>(mutator: @escaping (AvalancheEthereumKeychainMutator) throws -> R) throws -> R
 }
 
