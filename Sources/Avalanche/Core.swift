@@ -1,5 +1,5 @@
 //
-//  File.swift
+//  Core.swift
 //  
 //
 //  Created by Yehor Popovych on 9/5/20.
@@ -7,10 +7,25 @@
 
 import Foundation
 
+public typealias AvalancheResponseCallback<R, E: Error> = (Result<R, E>) -> ()
+
+public enum AvalancheApiSearchError: Error {
+    case networkInfoNotFound(net: AvalancheNetwork)
+    case apiInfoNotFound(net: AvalancheNetwork, apiId: String)
+}
+
 public protocol AvalancheCore: class {
-    var network: AvalancheNetworkProvider { get }
+    var connections: AvalancheConnectionFactory { get }
+    var keychains: AvalancheKeychainFactory { get }
+    var networkInfo: AvalancheNetworkInfoProvider { get }
     
-    init(network: AvalancheNetworkProvider);
+    var network: AvalancheNetwork { get set }
     
-    func getAPI<A: AvalancheAPI>() -> A;
+    init(
+        connections: AvalancheConnectionFactory,
+        keychains: AvalancheKeychainFactory,
+        networkInfo: AvalancheNetworkInfoProvider
+    )
+    
+    func getAPI<A: AvalancheApi>() throws -> A
 }
