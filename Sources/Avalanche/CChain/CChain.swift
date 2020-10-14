@@ -20,6 +20,14 @@ public class AvalancheCChainApiInfo: AvalancheBaseApiInfo {
         self.chainId = chainId
         super.init(bId: bId, alias: alias, vm: vm)
     }
+    
+    override var apiPath: String {
+        return super.apiPath + "/rpc"
+    }
+    
+    public var wsApiPath: String {
+        return super.apiPath + "/ws"
+    }
 }
 
 public class AvalancheCChainApi: AvalancheApi {
@@ -29,7 +37,7 @@ public class AvalancheCChainApi: AvalancheApi {
     public let keychain: AvalancheEthereumKeychain
     
     public required init(avalanche: AvalancheCore, network: AvalancheNetwork, hrp: String, info: Info) {
-        self.network = avalanche.connections.wsRpcConnection(for: info.apiPath)
+        self.network = avalanche.connections.wsRpcConnection(for: info.wsApiPath)
         self.keychain = avalanche.keychains.avaEthereumKeychain(network: network, chainId: info.chainId)
     }
 }

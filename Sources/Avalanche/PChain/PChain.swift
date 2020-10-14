@@ -35,6 +35,10 @@ public class AvalanchePChainApiInfo: AvalancheBaseApiInfo {
         self.minDelegationFee = minDelegationFee; self.txFee = txFee; self.creationTxFee = creationTxFee
         super.init(bId: bId, alias: alias, vm: vm)
     }
+    
+    public var apiPath: String {
+        return "/ext/\(alias ?? blockchainId)"
+    }
 }
 
 public struct AvalanchePChainApi: AvalancheApi {

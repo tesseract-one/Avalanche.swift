@@ -39,6 +39,6 @@ public class AvalancheBaseApiInfo: AvalancheApiInfo {
     }
     
     public var apiPath: String {
-        return "/ext/bc/\(alias ?? self.blockchainId)"
+        return "/ext/bc/\(alias ?? blockchainId)"
     }
 }
