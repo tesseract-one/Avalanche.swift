@@ -22,9 +22,15 @@ let package = Package(
         // Targets can depend on other targets in this package, and on products in packages which this package depends on.
         .target(
             name: "Avalanche",
-            dependencies: ["Starscream", "BigInt"]),
+            dependencies: ["Starscream", "BigInt", "Bech32"]),
+        .target(
+            name: "Bech32",
+            dependencies: []),
         .testTarget(
             name: "AvalancheTests",
             dependencies: ["Avalanche"]),
+        .testTarget(
+            name: "Bech32Tests",
+            dependencies: ["Bech32"]),
     ]
 )

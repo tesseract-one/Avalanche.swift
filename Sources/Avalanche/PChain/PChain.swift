@@ -43,9 +43,9 @@ public struct AvalanchePChainApi: AvalancheApi {
     public let keychain: AvalancheKeychain
     private let network: AvalancheRpcConnection
     
-    public init(avalanche: AvalancheCore, info: Info) {
-        self.keychain = avalanche.keychains.keychain(type: .secp256k1, prefix: Data())
+    public init(avalanche: AvalancheCore, network: AvalancheNetwork, hrp: String, info: Info) {
         self.network = avalanche.connections.httpRpcConnection(for: info.apiPath)
+        self.keychain = avalanche.keychains.avaSecp256k1Keychain(hrp: hrp, chainId: info.blockchainId, chainAlias: info.alias)
     }
 }
 
@@ -54,7 +54,7 @@ extension AvalancheCore {
         return try! self.getAPI()
     }
     
-    public func PChain(info: AvalanchePChainApi.Info) -> AvalanchePChainApi {
-        return AvalanchePChainApi(avalanche: self, info: info)
+    public func PChain(network: AvalancheNetwork, hrp: String, info: AvalanchePChainApi.Info) -> AvalanchePChainApi {
+        return AvalanchePChainApi(avalanche: self, network: network, hrp: hrp, info: info)
     }
 }

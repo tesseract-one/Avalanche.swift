@@ -10,7 +10,7 @@ import Foundation
 public protocol AvalancheApi {
     associatedtype Info: AvalancheApiInfo
     
-    init(avalanche: AvalancheCore, info: Info)
+    init(avalanche: AvalancheCore, network: AvalancheNetwork, hrp: String, info: Info)
     
     static var id: String { get }
 }

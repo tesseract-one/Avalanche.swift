@@ -29,3 +29,20 @@ public protocol AvalancheCore: class {
     
     func getAPI<A: AvalancheApi>() throws -> A
 }
+
+
+extension AvalancheCore {
+    public init(
+        connections: AvalancheConnectionFactory,
+        keychains: AvalancheKeychainFactory,
+        network: AvalancheNetwork,
+        hrp: String,
+        apiInfo: AvalancheApiInfoProvider
+    ) {
+        let provider = AvalancheDefaultNetworkInfoProvider()
+        let netInfo = AvalancheDefaultNetworkInfo(hrp: hrp, apiInfo: apiInfo)
+        provider.setInfo(info: netInfo, for: network)
+        self.init(connections: connections, keychains: keychains, networkInfo: provider)
+        self.network = network
+    }
+}

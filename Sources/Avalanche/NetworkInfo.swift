@@ -67,27 +67,36 @@ public class AvalancheDefaultNetworkInfoProvider: AvalancheNetworkInfoProvider {
         // TODO: Fill Network Info table. Example in JS
         let provider = AvalancheDefaultNetworkInfoProvider()
         
+        // AvalancheNetwork.manhattan
+        provider.setInfo(info: manhattanNetInfo(), for: .manhattan)
         // AvalancheNetwork.main || AvalancheNetwork.avalanche
-        let netAvaApis = AvalancheDefaultApiInfoProvider()
-        netAvaApis.setInfo(
+        provider.setInfo(info: avalancheNetInfo(), for: .avalanche)
+        
+        return provider
+    }()
+    
+    // AvalancheNetwork.manhattan
+    private static func manhattanNetInfo() -> AvalancheDefaultNetworkInfo {
+        let netApis = AvalancheDefaultApiInfoProvider()
+        netApis.setInfo(
             info: AvalancheXChainApi.Info(
                 txFee: .milliAVAX,
                 creationTxFee: .centiAVAX,
-                bId: "2oYMBNV4eNHyqk2fjjV5nVQLDbtmNJzq5s3qs3Lo6ftnC6FByM",
+                bId: "2vrXWHgGxh5n3YsLHMV16YVVJTpT4z45Fmb4y3bL6si8kLCyg9",
                 alias: "X"
             ),
             for: AvalancheXChainApi.self
         )
-        netAvaApis.setInfo(
+        netApis.setInfo(
             info: AvalancheCChainApi.Info(
                 gasPrice: 470.gwei,
-                chainId: 43114,
-                bId: "2q9e4r6Mu3U68nU1fYjgbR6JvwrRx36CohpAX5UQxse55x1Q5",
+                chainId: 43111,
+                bId: "2fFZQibQXcd6LTE4rpBPBAkLVXFE91Kit8pgxaBG1mRnh5xqbb",
                 alias: "C"
             ),
             for: AvalancheCChainApi.self
         )
-        netAvaApis.setInfo(
+        netApis.setInfo(
             info: AvalanchePChainApi.Info(
                 minConsumption: 0.1,
                 maxConsumption: 0.12,
@@ -105,9 +114,48 @@ public class AvalancheDefaultNetworkInfoProvider: AvalancheNetworkInfoProvider {
             ),
             for: AvalanchePChainApi.self
         )
-        let netAvalanche = AvalancheDefaultNetworkInfo(hrp: "avax", apiInfo: netAvaApis)
-        provider.setInfo(info: netAvalanche, for: .avalanche)
-        
-        return provider
-    }()
+        return AvalancheDefaultNetworkInfo(hrp: "custom", apiInfo: netApis)
+    }
+    
+    // AvalancheNetwork.main || AvalancheNetwork.avalanche
+    private static func avalancheNetInfo() -> AvalancheDefaultNetworkInfo {
+        let netApis = AvalancheDefaultApiInfoProvider()
+        netApis.setInfo(
+            info: AvalancheXChainApi.Info(
+                txFee: .milliAVAX,
+                creationTxFee: .centiAVAX,
+                bId: "2oYMBNV4eNHyqk2fjjV5nVQLDbtmNJzq5s3qs3Lo6ftnC6FByM",
+                alias: "X"
+            ),
+            for: AvalancheXChainApi.self
+        )
+        netApis.setInfo(
+            info: AvalancheCChainApi.Info(
+                gasPrice: 470.gwei,
+                chainId: 43114,
+                bId: "2q9e4r6Mu3U68nU1fYjgbR6JvwrRx36CohpAX5UQxse55x1Q5",
+                alias: "C"
+            ),
+            for: AvalancheCChainApi.self
+        )
+        netApis.setInfo(
+            info: AvalanchePChainApi.Info(
+                minConsumption: 0.1,
+                maxConsumption: 0.12,
+                maxStakingDuration: 31536000,
+                maxSupply: 720000000.AVAX,
+                minStake: 2000.AVAX,
+                minStakeDuration: 2 * 7 * 24 * 60 * 60, //two weeks
+                maxStakeDuration: 365 * 24 * 60 * 60, // one year
+                minDelegationStake: 25.AVAX,
+                minDelegationFee: 2.AVAX,
+                txFee: .milliAVAX,
+                creationTxFee: .centiAVAX,
+                bId: "11111111111111111111111111111111LpoYY",
+                alias: "P"
+            ),
+            for: AvalanchePChainApi.self
+        )
+        return AvalancheDefaultNetworkInfo(hrp: "avax", apiInfo: netApis)
+    }
 }

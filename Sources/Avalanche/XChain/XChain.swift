@@ -31,10 +31,12 @@ public class AvalancheXChainApi: AvalancheApi {
     
     private let network: AvalancheRpcConnection
     private let vmNetwork: AvalancheRpcConnection
+    public let keychain: AvalancheKeychain
     
-    public required init(avalanche: AvalancheCore, info: Info) {
+    public required init(avalanche: AvalancheCore, network: AvalancheNetwork, hrp: String, info: Info) {
         self.network = avalanche.connections.httpRpcConnection(for: info.apiPath)
         self.vmNetwork = avalanche.connections.httpRpcConnection(for: info.vmApiPath)
+        self.keychain = avalanche.keychains.avaSecp256k1Keychain(hrp: hrp, chainId: info.blockchainId, chainAlias: info.alias)
     }
 }
 
@@ -43,7 +45,7 @@ extension AvalancheCore {
         return try! self.getAPI()
     }
     
-    public func XChain(info: AvalancheXChainApi.Info) -> AvalancheXChainApi {
-        return AvalancheXChainApi(avalanche: self, info: info)
+    public func XChain(network: AvalancheNetwork, hrp: String, info: AvalancheXChainApi.Info) -> AvalancheXChainApi {
+        return AvalancheXChainApi(avalanche: self, network: network, hrp: hrp, info: info)
     }
 }

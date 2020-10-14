@@ -48,9 +48,8 @@ public class Avalanche: AvalancheCore {
         guard let info = netInfo.apiInfo.info(for: API.self) else {
             throw AvalancheApiSearchError.apiInfoNotFound(net: network, apiId: API.id)
         }
-        let api = API(avalanche: self, info: info)
+        let api = API(avalanche: self, network: network, hrp: netInfo.hrp, info: info)
         self.apis[API.id] = api
         return api
     }
 }
-

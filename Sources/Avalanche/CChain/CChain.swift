@@ -26,9 +26,11 @@ public class AvalancheCChainApi: AvalancheApi {
     public typealias Info = AvalancheCChainApiInfo
     
     private let network: AvalancheRpcConnection
+    public let keychain: AvalancheEthereumKeychain
     
-    public required init(avalanche: AvalancheCore, info: Info) {
+    public required init(avalanche: AvalancheCore, network: AvalancheNetwork, hrp: String, info: Info) {
         self.network = avalanche.connections.wsRpcConnection(for: info.apiPath)
+        self.keychain = avalanche.keychains.avaEthereumKeychain(network: network, chainId: info.chainId)
     }
 }
 
@@ -37,7 +39,7 @@ extension AvalancheCore {
         return try! self.getAPI()
     }
     
-    public func CChain(info: AvalancheCChainApi.Info) -> AvalancheCChainApi {
-        return AvalancheCChainApi(avalanche: self, info: info)
+    public func CChain(network: AvalancheNetwork, hrp: String, info: AvalancheCChainApi.Info) -> AvalancheCChainApi {
+        return AvalancheCChainApi(avalanche: self, network: network, hrp: hrp, info: info)
     }
 }
