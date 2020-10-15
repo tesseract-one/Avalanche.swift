@@ -25,6 +25,7 @@ public enum AvalancheConnectionError: Error {
     case callError(method: String, params: Any, message: String)
     case encodingError(error: EncodingError)
     case decodingError(error: DecodingError)
+    case unknownError
 }
 
 public typealias AvalancheConnectionCallback<R> = AvalancheResponseCallback<R, AvalancheConnectionError>
@@ -42,7 +43,7 @@ public protocol AvalancheRestConnection {
     )
     
     func post<Req: Encodable, Res: Decodable>(
-        _ path: String, data: Req?, headers: Dictionary<String, String>?,
+        _ path: String, data: Req, headers: Dictionary<String, String>?,
         response: @escaping AvalancheConnectionCallback<Res>
     )
     
