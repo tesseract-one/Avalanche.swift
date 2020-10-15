@@ -9,21 +9,22 @@ import Foundation
 
 public class Avalanche: AvalancheCore {    
     private var apis: [String: Any]
+    private let lock: NSRecursiveLock
     
     public var connections: AvalancheConnectionFactory  {
-        didSet { apis = [:] }
+        didSet { clearApis() }
     }
     
     public var keychains: AvalancheKeychainFactory {
-        didSet { apis = [:] }
+        didSet { clearApis() }
     }
     
     public var networkInfo: AvalancheNetworkInfoProvider {
-        didSet { apis = [:] }
+        didSet { clearApis() }
     }
     
     public var network: AvalancheNetwork {
-        didSet { apis = [:] }
+        didSet { clearApis() }
     }
     
     required public init(
@@ -36,9 +37,13 @@ public class Avalanche: AvalancheCore {
         self.connections = connections
         self.keychains = keychains
         self.networkInfo = networkInfo
+        self.lock = NSRecursiveLock()
     }
     
     public func getAPI<API: AvalancheApi>() throws -> API {
+        lock.lock()
+        defer { lock.unlock() }
+        
         if let api = self.apis[API.id] as? API {
             return api
         }
@@ -48,8 +53,20 @@ public class Avalanche: AvalancheCore {
         guard let info = netInfo.apiInfo.info(for: API.self) else {
             throw AvalancheApiSearchError.apiInfoNotFound(net: network, apiId: API.id)
         }
-        let api = API(avalanche: self, network: network, hrp: netInfo.hrp, info: info)
+        let api: API = self.createAPI(network: network, hrp: netInfo.hrp, info: info)
         self.apis[API.id] = api
         return api
+    }
+    
+    public func createAPI<API: AvalancheApi>(network: AvalancheNetwork, hrp: String, info: API.Info) -> API {
+        lock.lock()
+        defer { lock.unlock() }
+        return API(avalanche: self, network: network, hrp: hrp, info: info)
+    }
+    
+    private func clearApis() {
+        lock.lock()
+        defer { lock.unlock() }
+        apis = [:]
     }
 }

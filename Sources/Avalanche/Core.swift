@@ -28,6 +28,7 @@ public protocol AvalancheCore: class {
     )
     
     func getAPI<A: AvalancheApi>() throws -> A
+    func createAPI<A: AvalancheApi>(network: AvalancheNetwork, hrp: String, info: A.Info) -> A
 }
 
 

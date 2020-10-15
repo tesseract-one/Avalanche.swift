@@ -59,6 +59,6 @@ extension AvalancheCore {
     }
     
     public func PChain(network: AvalancheNetwork, hrp: String, info: AvalanchePChainApi.Info) -> AvalanchePChainApi {
-        return AvalanchePChainApi(avalanche: self, network: network, hrp: hrp, info: info)
+        return self.createAPI(network: network, hrp: hrp, info: info)
     }
 }

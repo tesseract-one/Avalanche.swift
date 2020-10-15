@@ -46,6 +46,6 @@ extension AvalancheCore {
     }
     
     public func XChain(network: AvalancheNetwork, hrp: String, info: AvalancheXChainApi.Info) -> AvalancheXChainApi {
-        return AvalancheXChainApi(avalanche: self, network: network, hrp: hrp, info: info)
+        return self.createAPI(network: network, hrp: hrp, info: info)
     }
 }

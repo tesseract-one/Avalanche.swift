@@ -98,6 +98,6 @@ extension AvalancheCore {
     }
     
     public func CChain(network: AvalancheNetwork, hrp: String, info: AvalancheCChainApi.Info) -> AvalancheCChainApi {
-        return AvalancheCChainApi(avalanche: self, network: network, hrp: hrp, info: info)
+        return self.createAPI(network: network, hrp: hrp, info: info)
     }
 }
