@@ -1,5 +1,5 @@
 //
-//  RESTConnection.swift
+//  RestConnection.swift
 //  
 //
 //  Created by Yehor Popovych on 10/15/20.
@@ -7,10 +7,10 @@
 
 import Foundation
 
-class AvalancheDefaultRestConnection: AvalancheRestConnection {
+class AvalancheDefaultRestConnection: AvalancheRestConnection {    
     let url: URL
     let responseQueue: DispatchQueue
-    var defaultHeaders: Dictionary<String, String>
+    let defaultHeaders: Dictionary<String, String>
     let session: URLSession
     let encoder: JSONEncoder
     let decoder: JSONDecoder
@@ -23,8 +23,8 @@ class AvalancheDefaultRestConnection: AvalancheRestConnection {
     }
     
     func get<Res: Decodable>(
-        _ path: String, headers: Dictionary<String, String>?,
-        response: @escaping (Result<Res, AvalancheConnectionError>) -> ()
+        _ path: String, headers: Dictionary<String, String>?, _ type: Res.Type,
+        response: @escaping AvalancheConnectionCallback<Res>
     ) {
         request(path: path, method: "GET", body: nil, headers: headers) { result in
             response(self.decode(from: result))
@@ -32,8 +32,8 @@ class AvalancheDefaultRestConnection: AvalancheRestConnection {
     }
     
     func post<Req: Encodable, Res: Decodable>(
-        _ path: String, data: Req, headers: Dictionary<String, String>?,
-        response: @escaping (Result<Res, AvalancheConnectionError>) -> ()
+        _ path: String, data: Req, headers: Dictionary<String, String>?, _ type: Res.Type,
+        response: @escaping AvalancheConnectionCallback<Res>
     ) {
         guard let reqData = encode(value: data, response: response) else { return }
         request(path: path, method: "POST", body: reqData, headers: headers) { result in
@@ -42,7 +42,7 @@ class AvalancheDefaultRestConnection: AvalancheRestConnection {
     }
     
     private func encode<Req: Encodable, Res: Decodable>(
-        value: Req, response: @escaping (Result<Res, AvalancheConnectionError>) -> ()
+        value: Req, response: @escaping AvalancheConnectionCallback<Res>
     ) -> Data? {
         do {
             return try encoder.encode(value)
@@ -50,7 +50,7 @@ class AvalancheDefaultRestConnection: AvalancheRestConnection {
             responseQueue.async { response(.failure(.encodingError(error: error))) }
             return nil
         } catch {
-            responseQueue.async { response(.failure(.unknownError)) }
+            responseQueue.async { response(.failure(.unknownError(error: error))) }
             return nil
         }
     }
@@ -64,7 +64,7 @@ class AvalancheDefaultRestConnection: AvalancheRestConnection {
             } catch let error as DecodingError {
                 return .failure(.decodingError(error: error))
             } catch {
-                return .failure(.unknownError)
+                return .failure(.unknownError(error: error))
             }
         }
     }
@@ -85,7 +85,9 @@ class AvalancheDefaultRestConnection: AvalancheRestConnection {
         }
         session.dataTask(with: req) { data, urlResponse, error in
             guard let urlResponse = urlResponse as? HTTPURLResponse, let data = data, error == nil else {
-                let err: AvalancheConnectionError = error != nil ? .socketError(error: error!) : .unknownError
+                let err: AvalancheConnectionError = error != nil
+                    ? .transportError(error: error!)
+                    : .unknownError(error: nil)
                 self.responseQueue.async { response(.failure(err)) }
                 return
             }
@@ -93,7 +95,7 @@ class AvalancheDefaultRestConnection: AvalancheRestConnection {
             let status = urlResponse.statusCode
             guard status >= 200 && status < 300 else {
                 self.responseQueue.async {
-                    response(.failure(.httpError(code: status, message: "Bad HTTP Code")))
+                    response(.failure(.badHttpCode(code: status, data: data)))
                 }
                 return
             }

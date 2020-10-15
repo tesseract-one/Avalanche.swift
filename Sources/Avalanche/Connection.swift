@@ -20,30 +20,36 @@ public protocol AvalancheConnectionFactory {
 }
 
 public enum AvalancheConnectionError: Error {
-    case httpError(code: Int, message: String)
-    case socketError(error: Error)
-    case callError(method: String, params: Any, message: String)
+    case badHttpCode(code: Int, data: Data?)
+    case transportError(error: Error)
     case encodingError(error: EncodingError)
     case decodingError(error: DecodingError)
-    case unknownError
+    case unknownError(error: Error?)
+}
+
+public enum AvalancheRpcConnectionError<P: Encodable, E: Decodable>: Error {
+    case connectionError(error: AvalancheConnectionError)
+    case callError(method: String, params: P, error: E)
 }
 
 public typealias AvalancheConnectionCallback<R> = AvalancheResponseCallback<R, AvalancheConnectionError>
+public typealias AvalancheRpcConnectionCallback<P: Encodable, R: Decodable, E: Decodable> =
+    AvalancheResponseCallback<R, AvalancheRpcConnectionError<P, E>>
 
 public protocol AvalancheRestConnection {
     var url: URL { get }
     var responseQueue: DispatchQueue { get }
-    var defaultHeaders: Dictionary<String, String> { get set }
+    var defaultHeaders: Dictionary<String, String> { get }
     
     init(url: URL, headers: Dictionary<String, String>, responseQueue: DispatchQueue)
     
     func get<Res: Decodable>(
-        _ path: String, headers: Dictionary<String, String>?,
+        _ path: String, headers: Dictionary<String, String>?, _ type: Res.Type,
         response: @escaping AvalancheConnectionCallback<Res>
     )
     
     func post<Req: Encodable, Res: Decodable>(
-        _ path: String, data: Req, headers: Dictionary<String, String>?,
+        _ path: String, data: Req, headers: Dictionary<String, String>?, _ type: Res.Type,
         response: @escaping AvalancheConnectionCallback<Res>
     )
     
@@ -53,13 +59,13 @@ public protocol AvalancheRestConnection {
 public protocol AvalancheRpcConnection {
     var url: URL { get }
     var responseQueue: DispatchQueue { get }
-    var defaultHeaders: Dictionary<String, String> { get set }
+    var defaultHeaders: Dictionary<String, String> { get }
     
     init(url: URL, headers: Dictionary<String, String>, responseQueue: DispatchQueue)
     
-    func call<Params: Encodable, Res: Decodable>(
+    func call<Params: Encodable, Res: Decodable, Err: Decodable>(
         method: String, params: Params, _ res: Res.Type,
-        result: @escaping AvalancheConnectionCallback<Res>
+        response: @escaping AvalancheRpcConnectionCallback<Params, Res, Err>
     )
 }
 

@@ -21,14 +21,27 @@ Swift language SDK for Avalanche blockchain platform
   s.swift_versions = ['5', '5.1', '5.2']
 
   s.module_name = 'Avalanche'
+  
+  s.subspec 'Avalanche' do |ss|
+    ss.source_files = 'Sources/Avalanche/**/*.swift'
 
-  s.source_files = 'Sources/Avalanche/**/*.swift'
-  
-  s.dependency 'BigInt', '~> 5.2'
-  s.dependency 'Starscream', '~> 4.0'
-  
-  s.test_spec 'Tests' do |test_spec|
-    test_spec.platforms = {:ios => '9.0', :osx => '10.10', :tvos => '9.0'}
-    test_spec.source_files = 'Tests/AvalancheTests/**/*.swift'
+    ss.dependency 'Avalanche/Bech32'
+    ss.dependency 'BigInt', '~> 5.2'
+    ss.dependency 'Starscream', '~> 4.0'
+    
+    ss.test_spec 'AvalancheTests' do |test_spec|
+      test_spec.platforms = {:ios => '9.0', :osx => '10.10', :tvos => '9.0'}
+      test_spec.source_files = 'Tests/AvalancheTests/**/*.swift'
+    end
   end
+
+  s.subspec 'Bech32' do |ss|
+    ss.source_files = 'Sources/Bech32/**/*.swift'
+    
+    ss.test_spec 'Bech32Tests' do |test_spec|
+      test_spec.source_files = 'Tests/Bech32Tests/**/*.swift'
+    end
+  end
+  
+  s.default_subspecs = 'Avalanche'
 end
