@@ -1,7 +1,7 @@
 # Avalanche.swift - The Avalanche Platform Swift Library
 
 [![GitHub license](https://img.shields.io/badge/license-Apache%202.0-lightgrey.svg)](LICENSE)
-[![Build Status](https://github.com/tesseract-one/Avalanche.swift/workflows/CI/badge.svg?branch=main)](https://github.com/tesseract-one/Avalanche.swift/actions?query=workflow%3ACI+branch%3Amain)
+[![Build Status](https://github.com/tesseract-one/Avalanche.swift/workflows/Build%20%26%20Tests/badge.svg?branch=main)](https://github.com/tesseract-one/Avalanche.swift/actions?query=workflow%3ABuild%20%26%20Tests+branch%3Amain)
 [![GitHub release](https://img.shields.io/github/release/tesseract-one/Avalanche.swift.svg)](https://github.com/tesseract-one/sAvalanche.swift/releases)
 [![SPM compatible](https://img.shields.io/badge/SwiftPM-Compatible-brightgreen.svg)](https://swift.org/package-manager/)
 [![CocoaPods version](https://img.shields.io/cocoapods/v/Avalanche.svg)](https://cocoapods.org/pods/Avalanche)
