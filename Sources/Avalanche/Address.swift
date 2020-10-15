@@ -6,7 +6,9 @@
 //
 
 import Foundation
+#if !COCOAPODS
 import Bech32
+#endif
 
 // TODO: Implement Address structure
 public struct AvalancheAddress {
