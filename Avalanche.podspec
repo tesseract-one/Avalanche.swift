@@ -1,10 +1,11 @@
 Pod::Spec.new do |s|
   s.name             = 'Avalanche'
   s.version          = '0.0.1'
-  s.summary          = 'Avalanche platform Swift SDK'
+  s.summary          = 'Avalanche.swift - The Avalanche Platform Swift Library'
 
   s.description      = <<-DESC
-Swift language SDK for Avalanche blockchain platform
+Avalanche.swift is a Swift Library for interfacing with the Avalanche Platform.
+The library allows one to issue commands to the Avalanche node APIs.
                        DESC
 
   s.homepage         = 'https://github.com/tesseract-one/Avalanche.swift'
@@ -39,6 +40,7 @@ Swift language SDK for Avalanche blockchain platform
     ss.source_files = 'Sources/Bech32/**/*.swift'
     
     ss.test_spec 'Bech32Tests' do |test_spec|
+      test_spec.platforms = {:ios => '9.0', :osx => '10.10', :tvos => '9.0'}
       test_spec.source_files = 'Tests/Bech32Tests/**/*.swift'
     end
   end

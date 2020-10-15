@@ -46,4 +46,23 @@ extension AvalancheCore {
         self.init(connections: connections, keychains: keychains, networkInfo: provider)
         self.network = network
     }
+    
+    public init(
+        url: URL,
+        keychains: AvalancheKeychainFactory,
+        network: AvalancheNetwork = .main,
+        networkInfo: AvalancheNetworkInfoProvider = AvalancheDefaultNetworkInfoProvider.default
+    ) {
+        let connections = AvalancheDefaultConnectionFactory(url: url)
+        self.init(connections: connections, keychains: keychains, networkInfo: networkInfo)
+    }
+    
+    public init(
+        url: URL, keychains: AvalancheKeychainFactory,
+        network: AvalancheNetwork, hrp: String,
+        apiInfo: AvalancheApiInfoProvider
+    ) {
+        let connections = AvalancheDefaultConnectionFactory(url: url)
+        self.init(connections: connections, keychains: keychains, network: network, hrp: hrp, apiInfo: apiInfo)
+    }
 }

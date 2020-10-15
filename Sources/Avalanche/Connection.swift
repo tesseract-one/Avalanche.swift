@@ -12,8 +12,6 @@ public protocol AvalancheConnectionFactory {
     var defaultHeaders: Dictionary<String, String> { get set }
     var responseQueue: DispatchQueue { get set }
     
-    init(url: URL, headers: Dictionary<String, String>, responseQueue: DispatchQueue)
-    
     func restConnection(for path: String) -> AvalancheRestConnection
     func httpRpcConnection(for path: String) -> AvalancheRpcConnection
     func wsRpcConnection(for path: String) -> AvalancheSubscribableRpcConnection
@@ -41,8 +39,6 @@ public protocol AvalancheRestConnection {
     var responseQueue: DispatchQueue { get }
     var defaultHeaders: Dictionary<String, String> { get }
     
-    init(url: URL, headers: Dictionary<String, String>, responseQueue: DispatchQueue)
-    
     func get<Res: Decodable>(
         _ path: String, headers: Dictionary<String, String>?, _ type: Res.Type,
         response: @escaping AvalancheConnectionCallback<Res>
@@ -60,8 +56,6 @@ public protocol AvalancheRpcConnection {
     var url: URL { get }
     var responseQueue: DispatchQueue { get }
     var defaultHeaders: Dictionary<String, String> { get }
-    
-    init(url: URL, headers: Dictionary<String, String>, responseQueue: DispatchQueue)
     
     func call<Params: Encodable, Res: Decodable, Err: Decodable>(
         method: String, params: Params, _ res: Res.Type,

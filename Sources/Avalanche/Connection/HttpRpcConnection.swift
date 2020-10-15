@@ -14,8 +14,16 @@ public class AvalancheDefaultHttpRpcConnection: AvalancheRpcConnection {
     public var responseQueue: DispatchQueue { http.responseQueue }
     public var defaultHeaders: Dictionary<String, String> { http.defaultHeaders }
     
-    public required init(url: URL, headers: Dictionary<String, String>, responseQueue: DispatchQueue) {
-        http = AvalancheDefaultRestConnection(url: url, headers: headers, responseQueue: responseQueue)
+    public init(
+        url: URL, headers: Dictionary<String, String>,
+        session: URLSession, responseQueue: DispatchQueue,
+        encoder: JSONEncoder, decoder: JSONDecoder
+    ) {
+        http = AvalancheDefaultRestConnection(
+            url: url, headers: headers, session: session,
+            responseQueue: responseQueue,
+            encoder: encoder, decoder: decoder
+        )
     }
     
     public func call<Params: Encodable, Res: Decodable, Err: Decodable>(

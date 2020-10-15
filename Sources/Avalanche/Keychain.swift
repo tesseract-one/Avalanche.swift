@@ -53,14 +53,17 @@ public protocol AvalancheEthereumKeychain {
 
 public protocol AvalancheKeychainMutator {
     func newKey() -> AvalancheAddress
-    func importKey(pk: Data) -> AvalancheAddress
-    func exportKey(for address: AvalancheAddress) -> Data
+    func importKey(pk: Data) throws -> AvalancheAddress
+    func importKey(cb58: String) throws -> AvalancheAddress
+    func exportKey(for address: AvalancheAddress) throws -> Data
+    func deleteKey(for address: AvalancheAddress) throws
 }
 
 public protocol AvalancheEthereumKeychainMutator {
     func newKey() -> Data
-    func importKey(pk: Data) -> Data
-    func exportKey(for address: Data) -> Data
+    func importKey(pk: Data) throws -> Data
+    func exportKey(for address: Data) throws -> Data
+    func deleteKey(for address: AvalancheAddress) throws
 }
 
 public protocol AvalancheKeychainFactory {

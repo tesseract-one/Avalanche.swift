@@ -7,22 +7,24 @@
 
 import Foundation
 
-class AvalancheDefaultRestConnection: AvalancheRestConnection {    
-    let url: URL
-    let responseQueue: DispatchQueue
-    let defaultHeaders: Dictionary<String, String>
-    let session: URLSession
-    let encoder: JSONEncoder
-    let decoder: JSONDecoder
+public class AvalancheDefaultRestConnection: AvalancheRestConnection {
+    public let url: URL
+    public let responseQueue: DispatchQueue
+    public let defaultHeaders: Dictionary<String, String>
+    public let session: URLSession
+    public let encoder: JSONEncoder
+    public let decoder: JSONDecoder
     
-    required init(url: URL, headers: Dictionary<String, String>, responseQueue: DispatchQueue) {
+    public init(
+        url: URL, headers: Dictionary<String, String>,
+        session: URLSession, responseQueue: DispatchQueue,
+        encoder: JSONEncoder, decoder: JSONDecoder
+    ) {
         self.url = url; self.defaultHeaders = headers; self.responseQueue = responseQueue
-        self.session = URLSession(configuration: .default)
-        self.encoder = JSONEncoder()
-        self.decoder = JSONDecoder()
+        self.session = session; self.encoder = encoder; self.decoder = decoder
     }
     
-    func get<Res: Decodable>(
+    public func get<Res: Decodable>(
         _ path: String, headers: Dictionary<String, String>?, _ type: Res.Type,
         response: @escaping AvalancheConnectionCallback<Res>
     ) {
@@ -31,7 +33,7 @@ class AvalancheDefaultRestConnection: AvalancheRestConnection {
         }
     }
     
-    func post<Req: Encodable, Res: Decodable>(
+    public func post<Req: Encodable, Res: Decodable>(
         _ path: String, data: Req, headers: Dictionary<String, String>?, _ type: Res.Type,
         response: @escaping AvalancheConnectionCallback<Res>
     ) {
