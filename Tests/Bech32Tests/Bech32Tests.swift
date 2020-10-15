@@ -10,7 +10,11 @@
 //  Inspired by Pieter Wuille C++ implementation
 
 import XCTest
+#if !COCOAPODS
 @testable import Bech32
+#else
+@testable import Avalanche
+#endif
 
 fileprivate typealias InvalidChecksum = (bech32: String, error: Bech32.DecodingError)
 fileprivate typealias ValidAddressData = (address: String, script: [UInt8])
