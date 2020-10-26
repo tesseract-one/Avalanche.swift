@@ -29,6 +29,7 @@ The library allows one to issue commands to the Avalanche node APIs.
     ss.dependency 'Avalanche/Bech32'
     ss.dependency 'BigInt', '~> 5.2'
     ss.dependency 'Starscream', '~> 4.0'
+    ss.dependency 'Serializable.swift', '~> 0.1'
     
     ss.test_spec 'AvalancheTests' do |test_spec|
       test_spec.platforms = {:ios => '9.0', :osx => '10.10', :tvos => '9.0'}
