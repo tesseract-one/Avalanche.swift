@@ -12,17 +12,17 @@ public class AvalancheDefaultRestConnection: AvalancheRestConnection {
     public let responseQueue: DispatchQueue
     public let defaultHeaders: Dictionary<String, String>
     public let session: URLSession
-    public let encoder: JSONEncoder
-    public let decoder: JSONDecoder
+    public let encoder: AvalancheRpcMessageEncoder
+    public let decoder: AvalancheRpcMessageDecoder
     
     public init(
         url: URL, headers: Dictionary<String, String>,
         session: URLSession, responseQueue: DispatchQueue,
-        encoder: JSONEncoder, decoder: JSONDecoder
+        encoder: AvalancheRpcMessageEncoder, decoder: AvalancheRpcMessageDecoder
     ) {
         var headers = headers
-        headers["Content-Type"] = "application/json"
-        
+        headers["Content-Type"] = type(of: encoder).httpContentType
+        headers["Accept"] = type(of: decoder).httpContentType
         self.url = url; self.defaultHeaders = headers; self.responseQueue = responseQueue
         self.session = session; self.encoder = encoder; self.decoder = decoder
     }

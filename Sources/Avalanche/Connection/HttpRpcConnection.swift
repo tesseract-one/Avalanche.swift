@@ -17,7 +17,7 @@ public class AvalancheDefaultHttpRpcConnection: AvalancheRpcConnection {
     public init(
         url: URL, headers: Dictionary<String, String>,
         session: URLSession, responseQueue: DispatchQueue,
-        encoder: JSONEncoder, decoder: JSONDecoder
+        encoder: AvalancheRpcMessageEncoder, decoder: AvalancheRpcMessageDecoder
     ) {
         http = AvalancheDefaultRestConnection(
             url: url, headers: headers, session: session,

@@ -7,6 +7,18 @@
 
 import Foundation
 
+public protocol AvalancheRpcMessageEncoder {
+    static var httpContentType: String { get }
+    
+    func encode<T: Encodable>(_ value: T) throws -> Data
+}
+
+public protocol AvalancheRpcMessageDecoder {
+    static var httpContentType: String { get }
+    
+    func decode<T: Decodable>(_ type: T.Type, from data: Data) throws -> T
+}
+
 public struct AvalancheRpcRequest<P: Encodable>: Encodable {
     public let jsonrpc: String
     public let id: UInt32
