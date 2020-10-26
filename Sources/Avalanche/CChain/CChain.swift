@@ -37,9 +37,9 @@ public class AvalancheCChainApi: AvalancheApi {
         let subscription: String
     }
     
-    private var subscriptions: Dictionary<String, (Data, AvalancheSubscribableRpcConnection) -> Void>
+    private var subscriptions: Dictionary<String, (Data) -> Void>
     private var subscriptionId: UInt?
-    private let network: AvalancheSubscribableRpcConnection
+    public let network: AvalancheSubscribableRpcConnection
     public let keychain: AvalancheEthereumKeychain
     
     public required init(avalanche: AvalancheCore, network: AvalancheNetwork, hrp: String, info: Info) {
@@ -55,7 +55,7 @@ public class AvalancheCChainApi: AvalancheApi {
             guard let handler = subscriptions[id.subscription] else {
                 return
             }
-            handler(data, network)
+            handler(data)
         } catch {}
     }
     
@@ -73,23 +73,25 @@ public class AvalancheCChainApi: AvalancheApi {
     }
     
     // Subscription Example. Should be updated to proper types
-//    public func eth_subscribe<P: Encodable>(type:  params: P, result: @escaping AvalancheConnectionCallback<CChainSubscription<String>>) {
+//    public func eth_subscribe<P: Encodable>(type: String, params: P, result: @escaping AvalancheRpcConnectionCallback<P, CChainSubscription<String>, CChainError>) {
+//        self.subscribeIfNeeded()
 //        network.call(method: "eth_subscribe", params: params, String.self) { res in
 //            result(res.map {
-//                let sub = CChainSubscription<String>(id: $0)
+//                let sub = CChainSubscription<String>(id: $0, connection: self.network)
 //                self.subscriptions[$0] = sub.handler
 //                return sub
 //            })
 //        }
 //    }
 //
-//    public func eth_unsubscribe<S: CChainSubscription<P, M>, P: Encodable, M: Decodable>(
-//        subcription: S, result: @escaping AvalancheConnectionCallback<Bool>
-//    ) {
-//        self.subscriptions.removeValue(forKey: subcription.id)
-//        self.unsubscribeIfNeeded()
-//        network.call(method: "eth_unsubscribe", params: subcription.id, Bool.self, result: result)
-//    }
+    public func eth_unsubscribe<S: CChainSubscription<P, M>, P: Encodable, M: Decodable>(
+        _ subcription: S, result: @escaping AvalancheRpcConnectionCallback<String, Bool, CChainError>
+    ) {
+        // TODO: fix multithreading
+        self.subscriptions.removeValue(forKey: subcription.id)
+        self.unsubscribeIfNeeded()
+        network.call(method: "eth_unsubscribe", params: subcription.id, Bool.self, response: result)
+    }
 }
 
 extension AvalancheCore {

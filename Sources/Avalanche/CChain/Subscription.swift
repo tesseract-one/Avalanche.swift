@@ -13,28 +13,51 @@ public class CChainSubscription<Params: Encodable, Message: Decodable> {
     }
     
     public let id: String
-    private var listener: ((Result<Message, Error>) -> Void)?
+    private var listeners: Dictionary<UInt, ((Result<Message, Error>) -> Void)>
+    private var lasListenerId: UInt
+    private let lock: NSLock
+    private weak var api: AvalancheCChainApi?
     
-    public init(id: String) {
+    public init(id: String, api: AvalancheCChainApi) {
         self.id = id
-        self.listener = nil
+        self.listeners = [:]
+        self.lock = NSLock()
+        self.api = api
+        self.lasListenerId = 0
     }
     
-    public func on(listener: @escaping (Result<Message, Error>) -> Void) {
-        self.listener = listener
+    public func on(listener: @escaping (Result<Message, Error>) -> Void) -> UInt {
+        lock.lock()
+        defer { lock.unlock() }
+        lasListenerId += 1
+        listeners[lasListenerId] = listener
+        return lasListenerId
     }
     
-    public func off() {
-        self.listener = nil
+    public func off(id: UInt) {
+        lock.lock()
+        defer { lock.unlock() }
+        listeners.removeValue(forKey: id)
     }
     
-    public var handler: (Data, AvalancheSubscribableRpcConnection) -> Void {
-        return { data, connection in
+    public func unsubscribe(cb: @escaping AvalancheRpcConnectionCallback<String, Bool, CChainError>) {
+        api?.eth_unsubscribe(self, result: cb)
+    }
+    
+    public var handler: (Data) -> Void {
+        return { data in
+            self.lock.lock()
+            defer { self.lock.unlock() }
+            guard let connection = self.api?.network else { return }
             do {
                 let (_, params) = try connection.parseInfo(from: data, SData.self)
-                self.listener?(.success(params.result))
+                for listener in self.listeners.values {
+                    listener(.success(params.result))
+                }
             } catch {
-                self.listener?(.failure(error))
+                for listener in self.listeners.values {
+                    listener(.failure(error))
+                }
             }
         }
     }
