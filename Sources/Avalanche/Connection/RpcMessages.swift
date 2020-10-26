@@ -39,3 +39,5 @@ public struct AvalancheRpcEvent<M: Decodable>: Decodable {
     public let params: M
 }
 
+public typealias VoidCallParams = Array<Int>
+

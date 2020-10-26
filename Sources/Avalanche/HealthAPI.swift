@@ -35,10 +35,10 @@ public class AvalancheHealthApi: AvalancheApi {
         self.network = avalanche.connections.httpRpcConnection(for: info.apiPath);
     }
     
-    public func getLiveness(cb: @escaping AvalancheRpcConnectionCallback<Array<Int>, AvalancheLivenessResponse, SerializableValue>) {
+    public func getLiveness(cb: @escaping AvalancheRpcConnectionCallback<VoidCallParams, AvalancheLivenessResponse, SerializableValue>) {
         network.call(
             method: "health.getLiveness",
-            params: [Int](), // empty array
+            params: [], // empty array
             AvalancheLivenessResponse.self,
             response: cb
         )
