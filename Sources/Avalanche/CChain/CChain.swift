@@ -73,18 +73,21 @@ public class AvalancheCChainApi: AvalancheApi {
     }
     
     // Subscription Example. Should be updated to proper types
-//    public func eth_subscribe<P: Encodable>(type: String, params: P, result: @escaping AvalancheRpcConnectionCallback<P, CChainSubscription<String>, CChainError>) {
-//        self.subscribeIfNeeded()
-//        network.call(method: "eth_subscribe", params: params, String.self) { res in
-//            result(res.map {
-//                let sub = CChainSubscription<String>(id: $0, connection: self.network)
-//                self.subscriptions[$0] = sub.handler
-//                return sub
-//            })
-//        }
-//    }
-//
-    public func eth_unsubscribe<S: CChainSubscription<P, M>, P: Encodable, M: Decodable>(
+    public func eth_subscribe<T: CChainSubscriptionType>(
+        _ params: T,
+        result: @escaping AvalancheRpcConnectionCallback<T, CChainSubscription<T.Event>, CChainError>
+    ) {
+        self.subscribeIfNeeded()
+        network.call(method: "eth_subscribe", params: params, String.self) { res in
+            result(res.map {
+                let sub = CChainSubscription<T.Event>(id: $0, api: self)
+                self.subscriptions[$0] = sub.handler
+                return sub
+            })
+        }
+    }
+
+    public func eth_unsubscribe<S: CChainSubscription<M>, M: Decodable>(
         _ subcription: S, result: @escaping AvalancheRpcConnectionCallback<String, Bool, CChainError>
     ) {
         // TODO: fix multithreading

@@ -31,7 +31,7 @@ public enum AvalancheRpcConnectionError<P: Encodable, E: Decodable>: Error {
 }
 
 public typealias AvalancheConnectionCallback<R> = AvalancheResponseCallback<R, AvalancheConnectionError>
-public typealias AvalancheRpcConnectionCallback<P: Encodable, R: Decodable, E: Decodable> =
+public typealias AvalancheRpcConnectionCallback<P: Encodable, R, E: Decodable> =
     AvalancheResponseCallback<R, AvalancheRpcConnectionError<P, E>>
 
 public protocol AvalancheRestConnection {

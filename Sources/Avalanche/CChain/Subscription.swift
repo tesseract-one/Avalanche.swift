@@ -6,8 +6,13 @@
 //
 
 import Foundation
+import Serializable
 
-public class CChainSubscription<Params: Encodable, Message: Decodable> {
+public protocol CChainSubscriptionType: Encodable {
+    associatedtype Event: Decodable
+}
+
+public class CChainSubscription<Message: Decodable> {
     private struct SData: Decodable {
         let result: Message
     }
