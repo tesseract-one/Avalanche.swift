@@ -14,8 +14,8 @@ public struct AvalancheHealthApiInfo: AvalancheApiInfo {
 
 public struct AvalancheLivenessResponse: Decodable {
     public struct Check: Decodable {
-        public let message: SerializableValue?
-        public let error: SerializableValue?
+        public let message: Dictionary<String, SerializableValue>?
+        public let error: Dictionary<String, SerializableValue>?
         public let timestamp: Date
         public let duration: UInt64
         public let contiguousFailures: UInt32
