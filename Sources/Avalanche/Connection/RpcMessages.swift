@@ -26,3 +26,4 @@ public struct AvalancheRpcEvent<M: Decodable>: Decodable {
     public let method: String
     public let params: M
 }
+

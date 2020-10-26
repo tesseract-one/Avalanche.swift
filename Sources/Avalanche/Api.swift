@@ -22,12 +22,16 @@ extension AvalancheApi {
 }
 
 public protocol AvalancheApiInfo {
+    var apiPath: String { get }
+}
+
+public protocol AvalancheVMApiInfo: AvalancheApiInfo {
     var blockchainId: String { get }
     var alias: String? { get }
     var vm: String { get }
 }
 
-public class AvalancheBaseApiInfo: AvalancheApiInfo {
+public class AvalancheBaseApiInfo: AvalancheVMApiInfo {
     public let blockchainId: String
     public let alias: String?
     public let vm: String

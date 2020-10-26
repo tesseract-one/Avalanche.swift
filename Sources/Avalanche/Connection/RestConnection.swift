@@ -20,6 +20,9 @@ public class AvalancheDefaultRestConnection: AvalancheRestConnection {
         session: URLSession, responseQueue: DispatchQueue,
         encoder: JSONEncoder, decoder: JSONDecoder
     ) {
+        var headers = headers
+        headers["Content-Type"] = "application/json"
+        
         self.url = url; self.defaultHeaders = headers; self.responseQueue = responseQueue
         self.session = session; self.encoder = encoder; self.decoder = decoder
     }

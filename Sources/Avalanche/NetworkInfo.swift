@@ -75,9 +75,14 @@ public class AvalancheDefaultNetworkInfoProvider: AvalancheNetworkInfoProvider {
         return provider
     }()
     
+    private static func addNonVmApis(to info: AvalancheDefaultApiInfoProvider) {
+        info.setInfo(info: AvalancheHealthApiInfo(), for: AvalancheHealthApi.self)
+    }
+    
     // AvalancheNetwork.manhattan
     private static func manhattanNetInfo() -> AvalancheDefaultNetworkInfo {
         let netApis = AvalancheDefaultApiInfoProvider()
+        addNonVmApis(to: netApis)
         netApis.setInfo(
             info: AvalancheXChainApi.Info(
                 txFee: .milliAVAX,
@@ -120,6 +125,7 @@ public class AvalancheDefaultNetworkInfoProvider: AvalancheNetworkInfoProvider {
     // AvalancheNetwork.main || AvalancheNetwork.avalanche
     private static func avalancheNetInfo() -> AvalancheDefaultNetworkInfo {
         let netApis = AvalancheDefaultApiInfoProvider()
+        addNonVmApis(to: netApis)
         netApis.setInfo(
             info: AvalancheXChainApi.Info(
                 txFee: .milliAVAX,

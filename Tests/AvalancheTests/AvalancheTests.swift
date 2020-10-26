@@ -1,12 +1,21 @@
 import XCTest
 @testable import Avalanche
 
+
+    
 final class AvalancheTests: XCTestCase {
     func testExample() {
-        // This is an example of a functional test case.
-        // Use XCTAssert and related functions to verify your tests produce the correct
-        // results.
-        //XCTAssertEqual(Avalanche().text, "Hello, World!")
+        
+        let keychain = MockKeychainFactory()
+        let ava = Avalanche(url: URL(string: "https://api.avax-test.network")!, keychains: keychain)
+        
+        let expect = expectation(description: "RPC Call should work")
+        
+        ava.Health.getLiveness() { result in
+            print("Result", result)
+            expect.fulfill()
+        }
+        wait(for: [expect], timeout: 10)
     }
 
     static var allTests = [

@@ -19,8 +19,8 @@ public class AvalancheDefaultConnectionFactory: AvalancheConnectionFactory {
         url: URL, headers: Dictionary<String, String> = [:],
         responseQueue: DispatchQueue = .main,
         session: URLSession = .shared,
-        encoder: JSONEncoder = JSONEncoder(),
-        decoder: JSONDecoder = JSONDecoder()
+        encoder: JSONEncoder = JSONEncoder.avalancheDefault,
+        decoder: JSONDecoder = JSONDecoder.avalancheDefault
     ) {
         self.session = session
         self.baseURL = url
@@ -31,8 +31,9 @@ public class AvalancheDefaultConnectionFactory: AvalancheConnectionFactory {
     }
     
     public func restConnection(for path: String) -> AvalancheRestConnection {
+        let url = URL(string: path, relativeTo: baseURL)!
         return AvalancheDefaultRestConnection(
-            url: baseURL.appendingPathExtension(path),
+            url: url,
             headers: defaultHeaders, session: session,
             responseQueue: responseQueue,
             encoder: encoder, decoder: decoder
@@ -40,8 +41,9 @@ public class AvalancheDefaultConnectionFactory: AvalancheConnectionFactory {
     }
     
     public func httpRpcConnection(for path: String) -> AvalancheRpcConnection {
+        let url = URL(string: path, relativeTo: baseURL)!
         return AvalancheDefaultHttpRpcConnection(
-            url: baseURL.appendingPathExtension(path),
+            url: url,
             headers: defaultHeaders, session: session,
             responseQueue: responseQueue,
             encoder: encoder, decoder: decoder
