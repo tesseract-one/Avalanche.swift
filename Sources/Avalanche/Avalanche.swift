@@ -12,19 +12,23 @@ public class Avalanche: AvalancheCore {
     private let lock: NSRecursiveLock
     
     public var connections: AvalancheConnectionFactory  {
-        didSet { clearApis() }
+        willSet { lock.lock() }
+        didSet { lock.unlock(); clearApis() }
     }
     
     public var keychains: AvalancheKeychainFactory {
-        didSet { clearApis() }
+        willSet { lock.lock() }
+        didSet { lock.unlock(); clearApis() }
     }
     
     public var networkInfo: AvalancheNetworkInfoProvider {
-        didSet { clearApis() }
+        willSet { lock.lock() }
+        didSet { lock.unlock(); clearApis() }
     }
     
     public var network: AvalancheNetwork {
-        didSet { clearApis() }
+        willSet { lock.lock() }
+        didSet { lock.unlock(); clearApis() }
     }
     
     required public init(
