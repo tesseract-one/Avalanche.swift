@@ -64,7 +64,9 @@ public class AvalancheDefaultNetworkInfoProvider: AvalancheNetworkInfoProvider {
     }
     
     public static let `default`: AvalancheNetworkInfoProvider = {
-        // TODO: Fill Network Info table. Example in JS
+        // TODO: Fill Network Info table.
+        // Example in JS:
+        // https://github.com/ava-labs/avalanchejs/blob/master/src/utils/constants.ts
         let provider = AvalancheDefaultNetworkInfoProvider()
         
         // AvalancheNetwork.manhattan
