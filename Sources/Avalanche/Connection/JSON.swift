@@ -38,7 +38,7 @@ extension JSONEncoder.DateEncodingStrategy {
 }
 
 extension JSONEncoder: AvalancheRpcMessageEncoder {
-    public static var httpContentType: String { "application/json" }
+    public static var httpContentType: String = "application/json"
     
     public static var avalancheDefault: JSONEncoder = {
         let encoder = JSONEncoder()
@@ -50,7 +50,7 @@ extension JSONEncoder: AvalancheRpcMessageEncoder {
 }
 
 extension JSONDecoder: AvalancheRpcMessageDecoder {
-    public static var httpContentType: String { "application/json" }
+    public static var httpContentType: String = "application/json"
     
     public static var avalancheDefault: JSONDecoder = {
         let decoder = JSONDecoder()
