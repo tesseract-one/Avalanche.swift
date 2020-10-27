@@ -18,7 +18,7 @@ public protocol AvalancheConnectionFactory {
 }
 
 public enum AvalancheConnectionError: Error {
-    case badHttpCode(code: Int, data: Data?)
+    case badHttpCode(code: Int, data: Data)
     case transportError(error: Error)
     case encodingError(error: EncodingError)
     case decodingError(error: DecodingError)
