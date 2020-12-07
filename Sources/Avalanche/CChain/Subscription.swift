@@ -7,6 +7,7 @@
 
 import Foundation
 import Serializable
+import RPC
 
 public protocol CChainSubscriptionType: Encodable {
     associatedtype Event: Decodable

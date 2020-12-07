@@ -7,6 +7,7 @@
 
 import Foundation
 import BigInt
+import RPC
 
 public class AvalancheCChainApiInfo: AvalancheBaseApiInfo {
     public let gasPrice: BigUInt

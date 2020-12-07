@@ -7,6 +7,8 @@
 
 import Foundation
 
+public typealias AvalancheResponseCallback<R, E: Error> = (Result<R, E>) -> ()
+
 public protocol AvalancheConnectionFactory {
     var baseURL: URL { get set }
     var defaultHeaders: Dictionary<String, String> { get set }

@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import RPC
 
 public class Avalanche: AvalancheCore {    
     private var apis: [String: Any]
