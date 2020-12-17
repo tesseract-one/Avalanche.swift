@@ -7,7 +7,7 @@
 
 import Foundation
 
-public typealias AvalancheResponseCallback<R, E: Error> = (Result<R, E>) -> ()
+public typealias Callback<R, E: Error> = (Result<R, E>) -> ()
 
 public protocol AvalancheConnectionFactory {
     var baseURL: URL { get set }
@@ -19,22 +19,22 @@ public protocol AvalancheConnectionFactory {
     func wsRpcConnection(for path: String) -> AvalancheSubscribableRpcConnection
 }
 
-public enum AvalancheConnectionError: Error {
-    case badHttpCode(code: Int, data: Data)
-    case transportError(error: Error)
-    case encodingError(error: EncodingError)
-    case decodingError(error: DecodingError)
-    case unknownError(error: Error?)
+public enum RequestError: Error {
+    case http(code: Int, message: Data)
+    case network(error: Error)
+    case encoding(error: EncodingError)
+    case decoding(error: DecodingError)
+    case unknown(error: Error?)
 }
 
-public enum AvalancheRpcConnectionError<P: Encodable, E: Decodable>: Error {
-    case connectionError(error: AvalancheConnectionError)
-    case callError(method: String, params: P, error: E)
+public enum RpcError<P: Encodable, E: Decodable>: Error {
+    case request(error: RequestError)
+    case call(method: String, params: P, error: E)
 }
 
-public typealias AvalancheConnectionCallback<R> = AvalancheResponseCallback<R, AvalancheConnectionError>
+public typealias AvalancheConnectionCallback<R> = Callback<R, RequestError>
 public typealias AvalancheRpcConnectionCallback<P: Encodable, R, E: Decodable> =
-    AvalancheResponseCallback<R, AvalancheRpcConnectionError<P, E>>
+    Callback<R, RpcError<P, E>>
 
 public protocol AvalancheRestConnection {
     var url: URL { get }

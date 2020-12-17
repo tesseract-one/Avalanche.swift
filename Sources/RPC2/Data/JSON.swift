@@ -1,8 +1,8 @@
 //
-//  JSON.swift
+//  File.swift
 //  
 //
-//  Created by Yehor Popovych on 10/26/20.
+//  Created by Daniel Leping on 14/12/2020.
 //
 
 import Foundation
@@ -37,10 +37,12 @@ extension JSONEncoder.DateEncodingStrategy {
     }
 }
 
-extension JSONEncoder: RpcMessageEncoder {
-    public static var httpContentType: String = "application/json"
+extension JSONEncoder: ContentEncoder {
+    public var contentType: ContentType {
+        .json
+    }
     
-    public static var rpcDefault: JSONEncoder = {
+    public static var rpc: JSONEncoder = {
         let encoder = JSONEncoder()
         encoder.dataEncodingStrategy = .base64
         encoder.dateEncodingStrategy = .iso8601withFractionalSeconds
@@ -49,10 +51,12 @@ extension JSONEncoder: RpcMessageEncoder {
     }()
 }
 
-extension JSONDecoder: RpcMessageDecoder {
-    public static var httpContentType: String = "application/json"
+extension JSONDecoder: ContentDecoder {
+    public var contentType: ContentType {
+        .json
+    }
     
-    public static var rpcDefault: JSONDecoder = {
+    public static var rpc: JSONDecoder = {
         let decoder = JSONDecoder()
         decoder.dataDecodingStrategy = .base64
         decoder.dateDecodingStrategy = .iso8601withFractionalSeconds

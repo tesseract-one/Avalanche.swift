@@ -23,12 +23,15 @@ let package = Package(
         // Targets can depend on other targets in this package, and on products in packages which this package depends on.
         .target(
             name: "Avalanche",
-            dependencies: ["RPC", "BigInt", "Bech32", "Serializable"]),
+            dependencies: ["RPC", "RPC2", "BigInt", "Bech32", "Serializable"]),
         .target(
             name: "Bech32",
             dependencies: []),
         .target(
             name: "RPC",
+            dependencies: ["Starscream"]),
+        .target(
+            name: "RPC2",
             dependencies: ["Starscream"]),
         .testTarget(
             name: "AvalancheTests",
@@ -36,5 +39,10 @@ let package = Package(
         .testTarget(
             name: "Bech32Tests",
             dependencies: ["Bech32"]),
+        .testTarget(
+            name: "RPC2Tests",
+            dependencies: ["RPC2"]),
     ]
 )
+
+

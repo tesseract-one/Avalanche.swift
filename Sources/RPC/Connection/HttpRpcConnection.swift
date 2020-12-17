@@ -17,7 +17,7 @@ public class AvalancheDefaultHttpRpcConnection: AvalancheRpcConnection {
     public init(
         url: URL, headers: Dictionary<String, String>,
         session: URLSession, responseQueue: DispatchQueue,
-        encoder: AvalancheRpcMessageEncoder, decoder: AvalancheRpcMessageDecoder
+        encoder: RpcMessageEncoder, decoder: RpcMessageDecoder
     ) {
         http = AvalancheDefaultRestConnection(
             url: url, headers: headers, session: session,
@@ -32,11 +32,11 @@ public class AvalancheDefaultHttpRpcConnection: AvalancheRpcConnection {
     ) {
         let call = AvalancheRpcRequest(jsonrpc: "2.0", id: 1, method: method, params: params)
         http.post("", data: call, headers: nil, AvalancheRpcResponse<Res, Err>.self) { res in
-            let mapped: Result<Res, AvalancheRpcConnectionError<Params, Err>> = res
-                .mapError { .connectionError(error: $0) }
+            let mapped: Result<Res, RpcError<Params, Err>> = res
+                .mapError { .request(error: $0) }
                 .flatMap {
                     $0.error != nil
-                        ? .failure(.callError(method: method, params: params, error: $0.error!))
+                        ? .failure(.call(method: method, params: params, error: $0.error!))
                         : .success($0.result!)
                 }
             response(mapped)

@@ -11,16 +11,16 @@ public class AvalancheDefaultConnectionFactory: AvalancheConnectionFactory {
     public var baseURL: URL
     public var defaultHeaders: Dictionary<String, String>
     public var responseQueue: DispatchQueue
-    public var decoder: AvalancheRpcMessageDecoder
-    public var encoder: AvalancheRpcMessageEncoder
+    public var decoder: RpcMessageDecoder
+    public var encoder: RpcMessageEncoder
     public var session: URLSession
     
     public init(
         url: URL, headers: Dictionary<String, String> = [:],
         responseQueue: DispatchQueue = .main,
         session: URLSession = .shared,
-        encoder: AvalancheRpcMessageEncoder = JSONEncoder.avalancheDefault,
-        decoder: AvalancheRpcMessageDecoder = JSONDecoder.avalancheDefault
+        encoder: RpcMessageEncoder = JSONEncoder.rpcDefault,
+        decoder: RpcMessageDecoder = JSONDecoder.rpcDefault
     ) {
         self.session = session
         self.baseURL = url
