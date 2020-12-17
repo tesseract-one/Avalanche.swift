@@ -16,7 +16,6 @@ extension RPCID {
         _id_queue.sync {
             _id_current = _id_current + 1
             return _id_current
-            return 1
         }
     }
 }
