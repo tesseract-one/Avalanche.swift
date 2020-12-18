@@ -7,16 +7,15 @@
 
 import Foundation
 
+import NIOConcurrencyHelpers
+
 public typealias RPCID = UInt32
-let _id_queue = DispatchQueue(label: "one.tesseract.rpc.idqueue")
-var _id_current:UInt32 = 1
+
+private var _id_current = NIOAtomic.makeAtomic(value: UInt32(1))
 
 extension RPCID {
     static func next() -> RPCID {
-        _id_queue.sync {
-            _id_current = _id_current + 1
-            return _id_current
-        }
+        _id_current.add(1)
     }
 }
 

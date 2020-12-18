@@ -33,7 +33,7 @@ public class WsConnection: PersistentConnection {
     }
     
     public func send(data: Data) {
-        flush(data: Data.init(base64Encoded: "ewoJImpzb25ycGMiOiAiMi4wIiwKCSJyZXN1bHQiOiB7CgkJIm1lc3NhZ2UiOiAic21va2luZyBraWxscyIKCX0sCgkiaWQiOiAzCn0="))
+        flush(data: Data.init(base64Encoded: "ewoJImpzb25ycGMiOiAiMi4wIiwKCSJyZXN1bHQiOiB7CgkJIm1lc3NhZ2UiOiAic21va2luZyBraWxscyIKCX0sCgkiaWQiOiAyCn0="))
     }
 }
 
