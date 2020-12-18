@@ -7,7 +7,7 @@
 
 import Foundation
 import BigInt
-import RPC
+//import RPC
 
 public class AvalancheXChainApiInfo: AvalancheBaseApiInfo {
     public let txFee: BigUInt
@@ -30,13 +30,13 @@ public class AvalancheXChainApiInfo: AvalancheBaseApiInfo {
 public class AvalancheXChainApi: AvalancheApi {
     public typealias Info = AvalancheXChainApiInfo
     
-    private let network: AvalancheRpcConnection
-    private let vmNetwork: AvalancheRpcConnection
+    //FIX: private let network: AvalancheRpcConnection
+    //FIX: private let vmNetwork: AvalancheRpcConnection
     public let keychain: AvalancheKeychain
     
     public required init(avalanche: AvalancheCore, network: AvalancheNetwork, hrp: String, info: Info) {
-        self.network = avalanche.connections.httpRpcConnection(for: info.apiPath)
-        self.vmNetwork = avalanche.connections.httpRpcConnection(for: info.vmApiPath)
+        //FIX: self.network = avalanche.connections.httpRpcConnection(for: info.apiPath)
+        //FIX: self.vmNetwork = avalanche.connections.httpRpcConnection(for: info.vmApiPath)
         self.keychain = avalanche.keychains.avaSecp256k1Keychain(hrp: hrp, chainId: info.blockchainId, chainAlias: info.alias)
     }
 }

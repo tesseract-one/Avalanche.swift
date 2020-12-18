@@ -6,16 +6,14 @@
 //
 
 import Foundation
-import RPC
+//import RPC
 
-public class Avalanche: AvalancheCore {    
+public class Avalanche: AvalancheCore {
     private var apis: [String: Any]
     private let lock: NSRecursiveLock
     
-    public var connections: AvalancheConnectionFactory  {
-        willSet { lock.lock() }
-        didSet { lock.unlock(); clearApis() }
-    }
+    private let _url: URL
+    public let settings: AvalancheSettings
     
     public var keychains: AvalancheKeychainFactory {
         willSet { lock.lock() }
@@ -32,16 +30,13 @@ public class Avalanche: AvalancheCore {
         didSet { lock.unlock(); clearApis() }
     }
     
-    required public init(
-        connections: AvalancheConnectionFactory,
-        keychains: AvalancheKeychainFactory,
-        networkInfo: AvalancheNetworkInfoProvider = AvalancheDefaultNetworkInfoProvider.default
-    ) {
+    public required init(url: URL, keychains: AvalancheKeychainFactory, networkInfo: AvalancheNetworkInfoProvider, settings: AvalancheSettings) {
+        self._url = url
         self.apis = [:]
         self.network = .main
-        self.connections = connections
         self.keychains = keychains
         self.networkInfo = networkInfo
+        self.settings = settings
         self.lock = NSRecursiveLock()
     }
     
@@ -67,6 +62,10 @@ public class Avalanche: AvalancheCore {
         lock.lock()
         defer { lock.unlock() }
         return API(avalanche: self, network: network, hrp: hrp, info: info)
+    }
+    
+    public func url(path: String) -> URL {
+        URL(string: path, relativeTo: _url)!
     }
     
     private func clearApis() {

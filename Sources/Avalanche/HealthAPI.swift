@@ -7,7 +7,7 @@
 
 import Foundation
 import Serializable
-import RPC
+import RPC2
 
 public struct AvalancheHealthApiInfo: AvalancheApiInfo {
     public let apiPath: String = "/ext/health"
@@ -27,27 +27,34 @@ public struct AvalancheLivenessResponse: Decodable {
     public let checks: Dictionary<String, Check>
 }
 
+public typealias VoidParams = Optional<Void>
+
 public class AvalancheHealthApi: AvalancheApi {
     public typealias Info = AvalancheHealthApiInfo
     
-    private let network: AvalancheRpcConnection
+    private let service: Service<HttpConnection, Void>
     
     public required init(avalanche: AvalancheCore, network: AvalancheNetwork, hrp: String, info: AvalancheHealthApiInfo) {
-        self.network = avalanche.connections.httpRpcConnection(for: info.apiPath);
+        let settings = avalanche.settings
+        let url = avalanche.url(path: info.apiPath)
+        self.service = Service(.http(url: url, session: settings.session, headers: settings.headers), queue: settings.queue, encoder: settings.encoder, decoder: settings.decoder)
     }
     
-    public func getLiveness(cb: @escaping AvalancheRpcConnectionCallback<VoidCallParams, AvalancheLivenessResponse, SerializableValue>) {
-        network.call(
+    public func getLiveness(cb: @escaping RequestCallback<Nil, AvalancheLivenessResponse, SerializableValue>) {
+        service.call(
             method: "health.getLiveness",
-            params: [], // empty array
+            params: nil,
             AvalancheLivenessResponse.self,
+            SerializableValue.self,
             response: cb
         )
     }
 }
 
 extension AvalancheCore {
-    public var Health: AvalancheHealthApi {
-        return try! self.getAPI()
+    public var health: AvalancheHealthApi {
+        try! self.getAPI()
     }
 }
+
+//let Service: protocol<ClientService, ServerService> = Service(

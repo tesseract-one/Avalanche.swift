@@ -63,13 +63,13 @@ public struct HttpConnectionFactory : SingleShotConnectionFactory {
     public let session: URLSession
     public let headers: Dictionary<String, String>
     
-    public func create(queue: DispatchQueue) -> Connection {
-        HttpConnection(url: url, queue: queue, headers: headers, session: session)
+    public func create(queue: DispatchQueue, headers: Dictionary<String, String>) -> Connection {
+        HttpConnection(url: url, queue: queue, headers: headers.merging(self.headers) {$1}, session: session)
     }
 }
 
 extension ConnectionFactoryProvider where Factory == HttpConnectionFactory {
-    static func http(url: URL, session: URLSession = URLSession.shared, headers: Dictionary<String, String> = [:]) -> ConnectionFactoryProvider<HttpConnectionFactory> {
+    public static func http(url: URL, session: URLSession = URLSession.shared, headers: Dictionary<String, String> = [:]) -> ConnectionFactoryProvider<HttpConnectionFactory> {
         ConnectionFactoryProvider(factory: HttpConnectionFactory(url: url, session: session, headers: headers))
     }
 }

@@ -22,12 +22,12 @@ extension ConnectionFactoryProvider: ConnectionFactory {
 ///Single Shot Connection
 
 public protocol SingleShotConnectionFactory: ConnectionFactory {
-    func create(queue: DispatchQueue) -> Connection
+    func create(queue: DispatchQueue, headers: Dictionary<String, String>) -> Connection
 }
 
 extension ConnectionFactoryProvider: SingleShotConnectionFactory where Factory: SingleShotConnectionFactory {
-    public func create(queue: DispatchQueue) -> Factory.Connection {
-        factory.create(queue: queue)
+    public func create(queue: DispatchQueue, headers: Dictionary<String, String>) -> Factory.Connection {
+        factory.create(queue: queue, headers: headers)
     }
 }
 
