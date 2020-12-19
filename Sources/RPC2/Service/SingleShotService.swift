@@ -7,7 +7,7 @@
 
 import Foundation
 
-public extension Service where Connection: SingleShotConnection, Delegate == Void {
+/*public extension Service where Connection: SingleShotConnection, Delegate == Void {
     convenience init<F: SingleShotConnectionFactory>(factory: F, queue: DispatchQueue, encoder: ContentEncoder, decoder:ContentDecoder) where F.Connection == Connection {
         var headers = Dictionary<String, String>()
         
@@ -20,4 +20,4 @@ public extension Service where Connection: SingleShotConnection, Delegate == Voi
     convenience init<F: SingleShotConnectionFactory>(_ cfp: ConnectionFactoryProvider<F>, queue: DispatchQueue, encoder: ContentEncoder, decoder:ContentDecoder) where F.Connection == Connection {
         self.init(factory: cfp.factory, queue: queue, encoder: encoder, decoder: decoder)
     }
-}
+}*/

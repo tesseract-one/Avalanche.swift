@@ -42,17 +42,99 @@ struct DummyPersistentConnection: PersistentConnection {
 extension String : Error {
 }
 
+/*class SSS<Ser: ClientService> where Ser : ServiceProtocol {
+    let ser: Ser
+    
+    init(ser: Ser) {
+        self.ser = ser
+    }
+}
+
+extension SSS where Ser.Connection: SingleShotConnection {
+    func a() {}
+}
+
+extension SSS where Ser.Connection: PersistentConnection {
+    func a() {}
+}*/
+
+protocol SSSP {
+    
+}
+
+/*class Cont {
+    let sss: SSSP
+    
+    init<Factory: ConnectionFactory>(_ cfp: ConnectionFactoryProvider<Factory>) {
+        sss = SSS(ser: JsonRpc2(cfp, queue: .main, encoder: JSONEncoder.rpc, decoder: JSONDecoder.rpc))
+    }
+}*/
+
+
+
+
 class RPC2Tests: XCTestCase {
     func testPlayground() {
+        #if swift(>=5.3)
+        print("Hello, Swift 5.3")
+
+        #elseif swift(>=5.2)
+        print("Hello, Swift 5.2")
+
+        #elseif swift(>=5.1)
+        print("Hello, Swift 5.1")
+
+        #elseif swift(>=5.0)
+        print("Hello, Swift 5.0")
+
+        #elseif swift(>=4.2)
+        print("Hello, Swift 4.2")
+
+        #elseif swift(>=4.1)
+        print("Hello, Swift 4.1")
+
+        #elseif swift(>=4.0)
+        print("Hello, Swift 4.0")
+
+        #elseif swift(>=3.2)
+        print("Hello, Swift 3.2")
+
+        #elseif swift(>=3.0)
+        print("Hello, Swift 3.0")
+
+        #elseif swift(>=2.2)
+        print("Hello, Swift 2.2")
+
+        #elseif swift(>=2.1)
+        print("Hello, Swift 2.1")
+
+        #elseif swift(>=2.0)
+        print("Hello, Swift 2.0")
+
+        #elseif swift(>=1.2)
+        print("Hello, Swift 1.2")
+
+        #elseif swift(>=1.1)
+        print("Hello, Swift 1.1")
+
+        #elseif swift(>=1.0)
+        print("Hello, Swift 1.0")
+
+        #endif
+
         let queue = DispatchQueue.main
         let encoder = JSONEncoder.rpc
         let decoder = JSONDecoder.rpc
         let session = URLSession.shared
         
+        //let ser = SSS(ser: JsonRpc(.http(url: URL(string: "http://google.com/")!), queue: queue, encoder: encoder, decoder: decoder))
+        
         //let ssszzzz:SingleShotConnectionFactory = .http(url: URL(string: "http://google.com/")!)
-        let service = Service(.http(url: URL(string: "http://google.com/")!), queue: queue, encoder: encoder, decoder: decoder)
-        service.call(method: "test", params: "wtf", String.self, String.self) { res in
+        let service = JsonRpc(.http(url: URL(string: "https://main-rpc.linkpool.io/")!), queue: queue, encoder: encoder, decoder: decoder)
+        let expectationWeb3 = self.expectation(description: "web3")
+        service.call(method: "web3_clientVersion", params: Nil.nil, String.self, String.self) { res in
             print(res)
+            expectationWeb3.fulfill()
         }
         var sss = ""
         
@@ -66,12 +148,14 @@ class RPC2Tests: XCTestCase {
             case .failure(let error): break
             }
         }
-        let base = Service(queue: queue, connection: (), encoder: JSONEncoder.rpc, decoder: JSONDecoder.rpc, delegate: ())
-        let ss = Service(.ws(url: URL(string: "ws://google.com/")!), queue: queue, encoder: JSONEncoder.rpc, decoder: JSONDecoder.rpc, delegate: ())
+        //let base = Service(queue: queue, connection: (), encoder: JSONEncoder.rpc, decoder: JSONDecoder.rpc, delegate: ())
+        var ss: Client & Delegator = JsonRpc(.ws(url: URL(string: "ws://google.com/")!), queue: queue, encoder: JSONEncoder.rpc, decoder: JSONDecoder.rpc)
 //        base.call(method: "", params: "", String.self) { (res:Result<String, ServiceError<String,String>>) in
 //        }
         
         let expectation = self.expectation(description: "call")
+        
+        ss.delegate = expectation
         
         ss.call(method: "test", params: TestReq(), TestResponse.self, TestError.self) { res in
             print("!!!all is good!!!")

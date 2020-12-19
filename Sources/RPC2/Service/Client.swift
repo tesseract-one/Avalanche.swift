@@ -15,23 +15,14 @@ public enum RequestError<Params: Encodable, Error: Decodable>: Swift.Error {
 
 public typealias RequestCallback<Params: Encodable, Response: Decodable, Error: Decodable> = Callback<Response, RequestError<Params, Error>>
 
-public protocol ClientService : ServiceProtocol {
+public protocol Client {
     func call<Params: Encodable, Res: Decodable, Err: Decodable>(
         method: String, params: Params, _ res: Res.Type, _ err: Err.Type,
         response: @escaping RequestCallback<Params, Res, Err>
     )
 }
 
-public extension ClientService {
-    func call<Params: Encodable, Res: Decodable, Err: Decodable>(
-        method: String, params: Params, _ res: Res.Type, _ err: Err.Type,
-        response callback: @escaping RequestCallback<Params, Res, Err>
-    ) {
-        fatalError("Can't work with an unknown connection. If this is called - implement ClientService::call for your connection")
-    }
-}
-
-extension ClientService {
+extension ServiceCore {
     static func deserialize<Res: Decodable, Params: Encodable, Err: Decodable>(data: Data, decoder: ContentDecoder, method: String, params: Params, _ res: Res.Type, _ err: Err.Type) -> Result<Res, RequestError<Params, Err>> {
         let envelope:Result<ResponseEnvelope<Res, Err>, ServiceError> = decoder.tryDecode(ResponseEnvelope<Res, Err>.self, from: data).mapError {
             .codec(cause: $0)
@@ -58,7 +49,7 @@ extension ClientService {
     }
 }
 
-public extension ClientService where Self.Connection: SingleShotConnection {
+public extension ServiceCore where Connection: SingleShotConnection {
     func call<Params: Encodable, Res: Decodable, Err: Decodable>(
         method: String, params: Params, _ res: Res.Type, _ err: Err.Type,
         response callback: @escaping RequestCallback<Params, Res, Err>
@@ -96,7 +87,7 @@ public extension ClientService where Self.Connection: SingleShotConnection {
     }
 }
 
-public extension ClientService where Self: ResponseClosuresRegistry, Self.Connection: PersistentConnection {
+public extension ServiceCore where Connection: PersistentConnection {
     func call<Params: Encodable, Res: Decodable, Err: Decodable>(
         method: String, params: Params, _ res: Res.Type, _ err: Err.Type,
         response callback: @escaping RequestCallback<Params, Res, Err>

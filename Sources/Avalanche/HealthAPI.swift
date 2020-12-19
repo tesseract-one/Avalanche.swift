@@ -27,17 +27,16 @@ public struct AvalancheLivenessResponse: Decodable {
     public let checks: Dictionary<String, Check>
 }
 
-public typealias VoidParams = Optional<Void>
-
 public class AvalancheHealthApi: AvalancheApi {
     public typealias Info = AvalancheHealthApiInfo
     
-    private let service: Service<HttpConnection, Void>
+    private let service: Client
     
     public required init(avalanche: AvalancheCore, network: AvalancheNetwork, hrp: String, info: AvalancheHealthApiInfo) {
         let settings = avalanche.settings
         let url = avalanche.url(path: info.apiPath)
-        self.service = Service(.http(url: url, session: settings.session, headers: settings.headers), queue: settings.queue, encoder: settings.encoder, decoder: settings.decoder)
+        
+        self.service = JsonRpc(.http(url: url, session: settings.session, headers: settings.headers), queue: settings.queue, encoder: settings.encoder, decoder: settings.decoder)
     }
     
     public func getLiveness(cb: @escaping RequestCallback<Nil, AvalancheLivenessResponse, SerializableValue>) {
