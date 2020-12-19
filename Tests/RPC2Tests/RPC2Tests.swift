@@ -131,43 +131,59 @@ class RPC2Tests: XCTestCase {
         
         //let ssszzzz:SingleShotConnectionFactory = .http(url: URL(string: "http://google.com/")!)
         let service = JsonRpc(.http(url: URL(string: "https://main-rpc.linkpool.io/")!), queue: queue, encoder: encoder, decoder: decoder)
-        let expectationWeb3 = self.expectation(description: "web3")
+        let expectationWeb3 = self.expectation(description: "http")
+        
+        var res1: String = ""
+        
         service.call(method: "web3_clientVersion", params: Nil.nil, String.self, String.self) { res in
             print(res)
+            switch res {
+            case .success(let ver): res1 = ver
+            default:break
+            }
+            
             expectationWeb3.fulfill()
         }
         var sss = ""
         
         
-        let dummySS = DummySingleShotConnection()
-        let httpConnection = HttpConnection(url: URL(string: "http://google.com/")!, queue: queue, headers: [:], session: session)
-        let wsConnection = WsConnection(url: URL(string: "ws://google.com/")!, queue: queue) { message in
+        //let dummySS = DummySingleShotConnection()
+        //let httpConnection = HttpConnection(url: URL(string: "http://google.com/")!, queue: queue, headers: [:], session: session)
+        /*let wsConnection = WsConnection(url: URL(string: "ws://google.com/")!, queue: queue) { message in
             switch message {
             case .success(let data):
                 print("things are good:", data ?? "no data")
             case .failure(let error): break
             }
-        }
+        }*/
         //let base = Service(queue: queue, connection: (), encoder: JSONEncoder.rpc, decoder: JSONDecoder.rpc, delegate: ())
-        var ss: Client & Delegator = JsonRpc(.ws(url: URL(string: "ws://google.com/")!), queue: queue, encoder: JSONEncoder.rpc, decoder: JSONDecoder.rpc)
+        var ss: Client & Delegator = JsonRpc(.ws(url: URL(string: "wss://main-rpc.linkpool.io/ws")!), queue: queue, encoder: JSONEncoder.rpc, decoder: JSONDecoder.rpc)
 //        base.call(method: "", params: "", String.self) { (res:Result<String, ServiceError<String,String>>) in
 //        }
         
-        let expectation = self.expectation(description: "call")
+        let expectation = self.expectation(description: "ws")
         
         ss.delegate = expectation
         
-        ss.call(method: "test", params: TestReq(), TestResponse.self, TestError.self) { res in
-            print("!!!all is good!!!")
-            switch res {
-            case .failure(let e): print(e); break
-            case .success(let response): print(response.message); break
+        var res2 = ""
+        
+        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 1) {
+            print("Will call now")
+            ss.call(method: "web3_clientVersion", params: Nil.nil, String.self, String.self) { res in
+                print("!!!all is good!!!")
+                print(res)
+                switch res {
+                case .success(let ver): res2 = ver
+                default:break
+                }
+                
+                expectation.fulfill()
             }
-            
-            expectation.fulfill()
         }
         
-        self.waitForExpectations(timeout: 1, handler: nil)
+        self.waitForExpectations(timeout: 5, handler: nil)
+        
+        XCTAssertEqual(res1, res2)
     }
     
     static var allTests = [
