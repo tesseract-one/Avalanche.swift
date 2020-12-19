@@ -7,13 +7,13 @@
 
 import Foundation
 
-public protocol AvalancheRpcMessageEncoder {
+public protocol RpcMessageEncoder {
     static var httpContentType: String { get }
     
     func encode<T: Encodable>(_ value: T) throws -> Data
 }
 
-public protocol AvalancheRpcMessageDecoder {
+public protocol RpcMessageDecoder {
     static var httpContentType: String { get }
     
     func decode<T: Decodable>(_ type: T.Type, from data: Data) throws -> T

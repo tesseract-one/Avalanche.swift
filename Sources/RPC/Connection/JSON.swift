@@ -37,10 +37,10 @@ extension JSONEncoder.DateEncodingStrategy {
     }
 }
 
-extension JSONEncoder: AvalancheRpcMessageEncoder {
+extension JSONEncoder: RpcMessageEncoder {
     public static var httpContentType: String = "application/json"
     
-    public static var avalancheDefault: JSONEncoder = {
+    public static var rpcDefault: JSONEncoder = {
         let encoder = JSONEncoder()
         encoder.dataEncodingStrategy = .base64
         encoder.dateEncodingStrategy = .iso8601withFractionalSeconds
@@ -49,10 +49,10 @@ extension JSONEncoder: AvalancheRpcMessageEncoder {
     }()
 }
 
-extension JSONDecoder: AvalancheRpcMessageDecoder {
+extension JSONDecoder: RpcMessageDecoder {
     public static var httpContentType: String = "application/json"
     
-    public static var avalancheDefault: JSONDecoder = {
+    public static var rpcDefault: JSONDecoder = {
         let decoder = JSONDecoder()
         decoder.dataDecodingStrategy = .base64
         decoder.dateDecodingStrategy = .iso8601withFractionalSeconds

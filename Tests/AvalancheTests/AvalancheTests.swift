@@ -11,7 +11,7 @@ final class AvalancheTests: XCTestCase {
         
         let expect = expectation(description: "RPC Call should work")
         
-        ava.Health.getLiveness() { result in
+        ava.health.getLiveness() { result in
             print("Result", result)
             expect.fulfill()
         }

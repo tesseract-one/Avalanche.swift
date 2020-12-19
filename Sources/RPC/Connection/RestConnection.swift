@@ -12,13 +12,13 @@ public class AvalancheDefaultRestConnection: AvalancheRestConnection {
     public let responseQueue: DispatchQueue
     public let defaultHeaders: Dictionary<String, String>
     public let session: URLSession
-    public let encoder: AvalancheRpcMessageEncoder
-    public let decoder: AvalancheRpcMessageDecoder
+    public let encoder: RpcMessageEncoder
+    public let decoder: RpcMessageDecoder
     
     public init(
         url: URL, headers: Dictionary<String, String>,
         session: URLSession, responseQueue: DispatchQueue,
-        encoder: AvalancheRpcMessageEncoder, decoder: AvalancheRpcMessageDecoder
+        encoder: RpcMessageEncoder, decoder: RpcMessageDecoder
     ) {
         var headers = headers
         headers["Content-Type"] = type(of: encoder).httpContentType
@@ -52,31 +52,31 @@ public class AvalancheDefaultRestConnection: AvalancheRestConnection {
         do {
             return try encoder.encode(value)
         } catch let error as EncodingError {
-            responseQueue.async { response(.failure(.encodingError(error: error))) }
+            responseQueue.async { response(.failure(.encoding(error: error))) }
             return nil
         } catch {
-            responseQueue.async { response(.failure(.unknownError(error: error))) }
+            responseQueue.async { response(.failure(.unknown(error: error))) }
             return nil
         }
     }
     
     private func decode<Res: Decodable>(
-        from result: Result<Data, AvalancheConnectionError>
-    ) -> Result<Res, AvalancheConnectionError> {
+        from result: Result<Data, RequestError>
+    ) -> Result<Res, RequestError> {
         return result.flatMap {
             do {
                 return try .success(self.decoder.decode(Res.self, from: $0))
             } catch let error as DecodingError {
-                return .failure(.decodingError(error: error))
+                return .failure(.decoding(error: error))
             } catch {
-                return .failure(.unknownError(error: error))
+                return .failure(.unknown(error: error))
             }
         }
     }
     
     private func request(
         path: String, method: String, body: Data?, headers: Dictionary<String, String>?,
-        response: @escaping (Result<Data, AvalancheConnectionError>) -> Void
+        response: @escaping (Result<Data, RequestError>) -> Void
     ) {
         var combinedHeaders = self.defaultHeaders
         if let headers = headers {
@@ -90,9 +90,9 @@ public class AvalancheDefaultRestConnection: AvalancheRestConnection {
         }
         session.dataTask(with: req) { data, urlResponse, error in
             guard let urlResponse = urlResponse as? HTTPURLResponse, let data = data, error == nil else {
-                let err: AvalancheConnectionError = error != nil
-                    ? .transportError(error: error!)
-                    : .unknownError(error: nil)
+                let err: RequestError = error != nil
+                    ? .network(error: error!)
+                    : .unknown(error: nil)
                 self.responseQueue.async { response(.failure(err)) }
                 return
             }
@@ -100,7 +100,7 @@ public class AvalancheDefaultRestConnection: AvalancheRestConnection {
             let status = urlResponse.statusCode
             guard status >= 200 && status < 300 else {
                 self.responseQueue.async {
-                    response(.failure(.badHttpCode(code: status, data: data)))
+                    response(.failure(.http(code: status, message: data)))
                 }
                 return
             }
