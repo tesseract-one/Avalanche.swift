@@ -11,24 +11,15 @@ public protocol ServiceCoreProtocol {
     associatedtype Connection
     associatedtype Delegate
     
-    var queue: DispatchQueue {get}
-    var connection: Self.Connection {get}
-    
-    var encoder: ContentEncoder {get}
-    var decoder: ContentDecoder {get}
-    
     var delegate: Delegate? {get set}
-    
 }
 
-public typealias ResponseClosure = (Data)->Void
-
 public class ServiceCore<Connection, Delegate>: ServiceCoreProtocol {
-    public var queue: DispatchQueue
-    public var connection: Connection
+    var queue: DispatchQueue
+    var connection: Connection
     
-    public var encoder: ContentEncoder
-    public var decoder: ContentDecoder
+    var encoder: ContentEncoder
+    var decoder: ContentDecoder
     
     public var delegate: Delegate?
     

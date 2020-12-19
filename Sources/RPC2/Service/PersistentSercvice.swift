@@ -7,19 +7,21 @@
 
 import Foundation
 
-public protocol ResponseClosuresRegistry {
+typealias ResponseClosure = (Data)->Void
+
+protocol ResponseClosuresRegistry {
     func register(id: RPCID, closure: @escaping ResponseClosure)
     func remove(id: RPCID, result: @escaping (ResponseClosure?)->Void)
 }
 
 extension ServiceCore: ResponseClosuresRegistry where Connection: PersistentConnection {
-    public func register(id: RPCID, closure: @escaping ResponseClosure) {
+    func register(id: RPCID, closure: @escaping ResponseClosure) {
         queue.async {
             self.responseClosures[id] = closure
         }
     }
     
-    public func remove(id: RPCID, result: @escaping (ResponseClosure?)->Void) {
+    func remove(id: RPCID, result: @escaping (ResponseClosure?)->Void) {
         queue.async {
             result(self.responseClosures.removeValue(forKey: id))
         }
@@ -77,38 +79,3 @@ extension ServiceCore where Connection: PersistentConnection {
         }
     }
 }
-
-/*public extension Service where Connection: PersistentConnection {
-    convenience init<F: PersistentConnectionFactory>(factory: F, queue: DispatchQueue, encoder: ContentEncoder, decoder:ContentDecoder, delegate: Delegate) where F.Connection == Connection {
-        
-        var this:WeakRef<Service> = WeakRef(ref: nil)
-        
-        let conn = factory.create(queue: queue) { res in
-            guard let this = this.ref else {
-                //we're dead here
-                return
-            }
-            
-            this.process(res)
-        }
-    
-        
-        self.init(queue: queue, connection: conn, encoder: encoder, decoder: decoder, delegate: delegate)
-        //for our sink closure
-        this.ref = self
-    }
-    
-    convenience init<CF: PersistentConnectionFactory>(_ cfp: ConnectionFactoryProvider<CF>, queue: DispatchQueue, encoder: ContentEncoder, decoder:ContentDecoder, delegate: Delegate) where CF.Connection == Connection {
-        self.init(factory: cfp.factory, queue: queue, encoder: encoder, decoder: decoder, delegate: delegate)
-    }
-}*/
-
-/*public extension Service where Connection: PersistentConnection, Delegate == Void {
-    convenience init<F: PersistentConnectionFactory>(factory: F, queue: DispatchQueue, encoder: ContentEncoder, decoder:ContentDecoder) where F.Connection == Connection {
-        self.init(factory: factory, queue: queue, encoder: encoder, decoder: decoder, delegate: ())
-    }
-    
-    convenience init<F: PersistentConnectionFactory>(_ cfp: ConnectionFactoryProvider<F>, queue: DispatchQueue, encoder: ContentEncoder, decoder:ContentDecoder) where F.Connection == Connection {
-        self.init(cfp, queue: queue, encoder: encoder, decoder: decoder, delegate: ())
-    }
-}*/
