@@ -54,7 +54,7 @@ public class HttpConnection: SingleShotConnection {
     
 }
 
-///Factories
+///Factory
 
 public struct HttpConnectionFactory : SingleShotConnectionFactory {
     public typealias Connection = HttpConnection
@@ -63,13 +63,7 @@ public struct HttpConnectionFactory : SingleShotConnectionFactory {
     public let session: URLSession
     public let headers: Dictionary<String, String>
     
-    public func create(queue: DispatchQueue, headers: Dictionary<String, String>) -> Connection {
+    public func connection(queue: DispatchQueue, headers: Dictionary<String, String>) -> Connection {
         HttpConnection(url: url, queue: queue, headers: headers.merging(self.headers) {$1}, session: session)
-    }
-}
-
-extension ConnectionFactoryProvider where Factory == HttpConnectionFactory {
-    public static func http(url: URL, session: URLSession = URLSession.shared, headers: Dictionary<String, String> = [:]) -> ConnectionFactoryProvider<HttpConnectionFactory> {
-        ConnectionFactoryProvider(factory: HttpConnectionFactory(url: url, session: session, headers: headers))
     }
 }

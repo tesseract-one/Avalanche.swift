@@ -15,22 +15,13 @@ public enum ConnectionError: Error {
 
 public typealias ConnectionCallback = Callback<Data?, ConnectionError>
 
-
-///markers
-
-public protocol ClientConnection {
-}
-
-public protocol ServerConnection {
-}
-
 ///connections
 
-public protocol SingleShotConnection : ClientConnection {
+public protocol SingleShotConnection {
     func request(data: Data?, response: @escaping ConnectionCallback)
 }
 
-public protocol PersistentConnection : ClientConnection, ServerConnection {
+public protocol PersistentConnection {
     var sink: ConnectionCallback {get set}
     
     func send(data: Data)

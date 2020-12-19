@@ -37,20 +37,14 @@ public class WsConnection: PersistentConnection {
     }
 }
 
-///Factories
+///Factory
 
 public struct WsConnectionFactory : PersistentConnectionFactory {
     public typealias Connection = WsConnection
     
     public let url: URL
     
-    public func create(queue: DispatchQueue, sink: @escaping ConnectionCallback) -> Connection {
+    public func connection(queue: DispatchQueue, sink: @escaping ConnectionCallback) -> Connection {
         WsConnection(url: url, queue: queue, sink: sink)
-    }
-}
-
-extension ConnectionFactoryProvider where Factory == WsConnectionFactory {
-    static func ws(url: URL) -> ConnectionFactoryProvider<WsConnectionFactory> {
-        ConnectionFactoryProvider(factory: WsConnectionFactory(url: url))
     }
 }

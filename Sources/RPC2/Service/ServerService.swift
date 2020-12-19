@@ -12,7 +12,7 @@ public protocol ServerServiceDelegate {
     func notification(method: String, params: Data)
 }
 
-public protocol ServerService : ServiceProtocol {
+public protocol ServerService {
     associatedtype Delegate: ServerServiceDelegate
     
     var delegate: Delegate {get}

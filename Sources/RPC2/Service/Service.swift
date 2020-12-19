@@ -2,7 +2,7 @@
 //  File.swift
 //  
 //
-//  Created by Daniel Leping on 14/12/2020.
+//  Created by Daniel Leping on 19/12/2020.
 //
 
 import Foundation
@@ -14,40 +14,32 @@ public enum ServiceError: Swift.Error {
     case unregisteredResponse(id: RPCID, body: Data)
 }
 
-public protocol ServiceProtocol {
-    associatedtype Connection
+public class Service<Core: ServiceCoreProtocol> {
+    private var core: Core
+    private let caller: Client
     
-    var queue: DispatchQueue {get}
-    var connection: Self.Connection {get}
-    
-    var encoder: ContentEncoder {get}
-    var decoder: ContentDecoder {get}
-}
-
-public typealias ResponseClosure = (Data)->Void
-
-public class Service<Connection, Delegate>: ServiceProtocol {
-    public var queue: DispatchQueue
-    public var connection: Connection
-    
-    public var encoder: ContentEncoder
-    public var decoder: ContentDecoder
-    
-    public var delegate: Delegate
-    
-    var responseClosures = Dictionary<RPCID, ResponseClosure>()
-    
-    init(queue:DispatchQueue, connection: Connection, encoder: ContentEncoder, decoder:ContentDecoder, delegate: Delegate) {
-        self.queue = queue
-        self.connection = connection
-        self.encoder = encoder
-        self.delegate = delegate
-        self.decoder = decoder
+    init(core: Core, caller: Client) {
+        self.core = core
+        self.caller = caller
     }
 }
 
-extension Service: ClientService where Connection: ClientConnection {
+extension Service: Client {
+    public func call<Params: Encodable, Res: Decodable, Err: Decodable>(
+        method: String, params: Params, _ res: Res.Type, _ err: Err.Type,
+        response callback: @escaping RequestCallback<Params, Res, Err>
+    ) {
+        caller.call(method: method, params: params, res, err, response: callback)
+    }
 }
 
-extension Service: ServerService where Connection: ServerConnection, Delegate: ServerServiceDelegate {
+extension Service: Delegator where Core.Delegate == AnyObject {
+    public var delegate: AnyObject? {
+        get {
+            core.delegate
+        }
+        set {
+            core.delegate = newValue
+        }
+    }
 }

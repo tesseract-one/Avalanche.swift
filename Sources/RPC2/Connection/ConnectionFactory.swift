@@ -7,38 +7,13 @@
 
 import Foundation
 
-public protocol ConnectionFactory {
-    associatedtype Connection
+public protocol ConnectionFactory: FactoryBase {
 }
 
-public struct ConnectionFactoryProvider<Factory: ConnectionFactory> {
-    public let factory: Factory
+public protocol SingleShotConnectionFactory: ConnectionFactory where Connection: SingleShotConnection {
+    func connection(queue: DispatchQueue, headers: Dictionary<String, String>) -> Connection
 }
 
-extension ConnectionFactoryProvider: ConnectionFactory {
-    public typealias Connection = Factory.Connection
-}
-
-///Single Shot Connection
-
-public protocol SingleShotConnectionFactory: ConnectionFactory {
-    func create(queue: DispatchQueue, headers: Dictionary<String, String>) -> Connection
-}
-
-extension ConnectionFactoryProvider: SingleShotConnectionFactory where Factory: SingleShotConnectionFactory {
-    public func create(queue: DispatchQueue, headers: Dictionary<String, String>) -> Factory.Connection {
-        factory.create(queue: queue, headers: headers)
-    }
-}
-
-///Persistent Connection
-
-public protocol PersistentConnectionFactory: ConnectionFactory {
-    func create(queue: DispatchQueue, sink: @escaping ConnectionCallback) -> Connection
-}
-
-extension ConnectionFactoryProvider: PersistentConnectionFactory where Factory: PersistentConnectionFactory {
-    public func create(queue: DispatchQueue, sink: @escaping ConnectionCallback) -> Factory.Connection {
-        factory.create(queue: queue, sink: sink)
-    }
+public protocol PersistentConnectionFactory: ConnectionFactory where Connection: PersistentConnection {
+    func connection(queue: DispatchQueue, sink: @escaping ConnectionCallback) -> Connection
 }
