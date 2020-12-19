@@ -7,14 +7,29 @@
 
 import Foundation
 
+import WebSocket
+
 public class WsConnection: PersistentConnection {
     private let queue: DispatchQueue
+    private let ws: WebSocket
     
     public var sink: ConnectionCallback
     
     init(url: URL, queue: DispatchQueue, sink: @escaping ConnectionCallback) {
         self.queue = queue
         self.sink = sink
+        
+        self.ws = WebSocket()
+        
+        ws.connect(url: url)
+        
+        ws.onConnected = { _ in
+            print("!!!!!it did it!!!!")
+        }
+        
+        ws.onText = { [weak self] (string, _) in
+            self?.flush(data: string.data(using: .utf8))
+        }
     }
     
     private func flush(result: Result<Data?, ConnectionError>) {
@@ -33,7 +48,8 @@ public class WsConnection: PersistentConnection {
     }
     
     public func send(data: Data) {
-        flush(data: Data.init(base64Encoded: "ewoJImpzb25ycGMiOiAiMi4wIiwKCSJyZXN1bHQiOiB7CgkJIm1lc3NhZ2UiOiAic21va2luZyBraWxscyIKCX0sCgkiaWQiOiAyCn0="))
+        ws.send(data)
+        //flush(data: Data.init(base64Encoded: "ewoJImpzb25ycGMiOiAiMi4wIiwKCSJyZXN1bHQiOiB7CgkJIm1lc3NhZ2UiOiAic21va2luZyBraWxscyIKCX0sCgkiaWQiOiAyCn0="))
     }
 }
 
