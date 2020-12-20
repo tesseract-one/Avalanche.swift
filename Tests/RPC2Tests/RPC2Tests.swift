@@ -130,7 +130,8 @@ class RPC2Tests: XCTestCase {
         //let ser = SSS(ser: JsonRpc(.http(url: URL(string: "http://google.com/")!), queue: queue, encoder: encoder, decoder: decoder))
         
         //let ssszzzz:SingleShotConnectionFactory = .http(url: URL(string: "http://google.com/")!)
-        let service = JsonRpc(.http(url: URL(string: "https://main-rpc.linkpool.io/")!), queue: queue, encoder: encoder, decoder: decoder)
+        let service = JsonRpc(.http(url: URL(string: "https://api.avax-test.network/ext/bc/C/rpc")!), queue: queue, encoder: encoder, decoder: decoder)
+        //let service = JsonRpc(.http(url: URL(string: "https://main-rpc.linkpool.io/")!), queue: queue, encoder: encoder, decoder: decoder)
         let expectationWeb3 = self.expectation(description: "http")
         
         var res1: String = ""
@@ -146,7 +147,6 @@ class RPC2Tests: XCTestCase {
         }
         var sss = ""
         
-        
         //let dummySS = DummySingleShotConnection()
         //let httpConnection = HttpConnection(url: URL(string: "http://google.com/")!, queue: queue, headers: [:], session: session)
         /*let wsConnection = WsConnection(url: URL(string: "ws://google.com/")!, queue: queue) { message in
@@ -157,7 +157,8 @@ class RPC2Tests: XCTestCase {
             }
         }*/
         //let base = Service(queue: queue, connection: (), encoder: JSONEncoder.rpc, decoder: JSONDecoder.rpc, delegate: ())
-        var ss: Client & Delegator = JsonRpc(.ws(url: URL(string: "wss://main-rpc.linkpool.io/ws")!), queue: queue, encoder: JSONEncoder.rpc, decoder: JSONDecoder.rpc)
+        var ss: Client & Delegator = JsonRpc(.ws(url: URL(string: "wss://api.avax-test.network/ext/bc/C/ws")!), queue: queue, encoder: JSONEncoder.rpc, decoder: JSONDecoder.rpc)
+        //var ss: Client & Delegator = JsonRpc(.ws(url: URL(string: "wss://main-rpc.linkpool.io/ws")!), queue: queue, encoder: JSONEncoder.rpc, decoder: JSONDecoder.rpc)
 //        base.call(method: "", params: "", String.self) { (res:Result<String, ServiceError<String,String>>) in
 //        }
         
@@ -167,21 +168,33 @@ class RPC2Tests: XCTestCase {
         
         var res2 = ""
         
-        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 1) {
-            print("Will call now")
+        ss.call(method: "web3_clientVersion", params: Nil.nil, String.self, String.self) { res in
+            print("!!!all is good!!!")
+            print(res)
+            switch res {
+            case .success(let ver): res2 = ver
+            default:break
+            }
+            
+            expectation.fulfill()
+        }
+        
+        DispatchQueue.global().async {
+            print("I'm fine")
+        }
+        
+        for n in 0...100 {
+            print("About to launch #", n)
             ss.call(method: "web3_clientVersion", params: Nil.nil, String.self, String.self) { res in
-                print("!!!all is good!!!")
-                print(res)
-                switch res {
-                case .success(let ver): res2 = ver
-                default:break
-                }
-                
-                expectation.fulfill()
+                print("returned #", n)
             }
         }
         
-        self.waitForExpectations(timeout: 5, handler: nil)
+        DispatchQueue.global().async {
+            print("I'm still fine")
+        }
+        
+        self.waitForExpectations(timeout: 10, handler: nil)
         
         XCTAssertEqual(res1, res2)
     }

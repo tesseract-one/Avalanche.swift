@@ -14,8 +14,12 @@ public protocol ServiceFactory: FactoryBase {
     func caller(service: ServiceCore<Connection, Delegate>) -> Client
 }
 
-public struct ServiceFactoryProvider<Factory: ServiceFactory> {
+public struct ServiceFactoryProvider<Factory: ServiceFactory>: ConnectionFactoryProvider {
     public let factory: Factory
+    
+    public init(factory: Factory) {
+        self.factory = factory
+    }
 }
 
 extension ServiceFactoryProvider: ServiceFactory {
@@ -87,19 +91,7 @@ extension PersistentServiceFactory where Self: PersistentConnectionFactory {
 extension HttpConnectionFactory: SingleShotServiceFactory {
 }
 
-extension ServiceFactoryProvider where Factory == HttpConnectionFactory {
-    public static func http(url: URL, session: URLSession = URLSession.shared, headers: Dictionary<String, String> = [:]) -> ServiceFactoryProvider<HttpConnectionFactory> {
-        ServiceFactoryProvider(factory: HttpConnectionFactory(url: url, session: session, headers: headers))
-    }
-}
-
 extension WsConnectionFactory: PersistentServiceFactory {
-}
-
-extension ServiceFactoryProvider where Factory == WsConnectionFactory {
-    static func ws(url: URL) -> ServiceFactoryProvider<WsConnectionFactory> {
-        ServiceFactoryProvider(factory: WsConnectionFactory(url: url))
-    }
 }
 
 public func JsonRpc<Factory: ServiceFactory>(factory: Factory, queue: DispatchQueue, encoder: ContentEncoder, decoder:ContentDecoder) -> Service<ServiceCore<Factory.Connection, Factory.Delegate>> {

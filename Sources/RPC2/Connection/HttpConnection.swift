@@ -67,3 +67,9 @@ public struct HttpConnectionFactory : SingleShotConnectionFactory {
         HttpConnection(url: url, queue: queue, headers: headers.merging(self.headers) {$1}, session: session)
     }
 }
+
+extension ConnectionFactoryProvider where Factory == HttpConnectionFactory {
+    public static func http(url: URL, session: URLSession = URLSession.shared, headers: Dictionary<String, String> = [:]) -> Self {
+        Self(factory: HttpConnectionFactory(url: url, session: session, headers: headers))
+    }
+}
