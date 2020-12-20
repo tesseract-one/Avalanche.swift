@@ -43,3 +43,17 @@ extension Service: Delegator where Core.Delegate == AnyObject {
         }
     }
 }
+
+extension Service: Connectable where Core: Connectable {
+    public var connected: ConnectableState {
+        core.connected
+    }
+    
+    public func connect() {
+        core.connect()
+    }
+    
+    public func disconnect() {
+        core.disconnect()
+    }
+}

@@ -157,10 +157,16 @@ class RPC2Tests: XCTestCase {
             }
         }*/
         //let base = Service(queue: queue, connection: (), encoder: JSONEncoder.rpc, decoder: JSONDecoder.rpc, delegate: ())
-        var ss: Client & Delegator = JsonRpc(.ws(url: URL(string: "wss://api.avax-test.network/ext/bc/C/ws")!), queue: queue, encoder: JSONEncoder.rpc, decoder: JSONDecoder.rpc)
+        var ss: Client & Delegator & Connectable = JsonRpc(.ws(url: URL(string: "wss://api.avax-test.network/ext/bc/C/ws")!, autoconnect: false), queue: queue, encoder: JSONEncoder.rpc, decoder: JSONDecoder.rpc)
         //var ss: Client & Delegator = JsonRpc(.ws(url: URL(string: "wss://main-rpc.linkpool.io/ws")!), queue: queue, encoder: JSONEncoder.rpc, decoder: JSONDecoder.rpc)
 //        base.call(method: "", params: "", String.self) { (res:Result<String, ServiceError<String,String>>) in
 //        }
+        
+        if ss.connected == .disconnected {
+            ss.connect()
+        }
+        
+        XCTAssertEqual(ss.connected, ConnectableState.connecting)
         
         let expectation = self.expectation(description: "ws")
         
@@ -169,6 +175,7 @@ class RPC2Tests: XCTestCase {
         var res2 = ""
         
         ss.call(method: "web3_clientVersion", params: Nil.nil, String.self, String.self) { res in
+            XCTAssertEqual(ss.connected, .connected)
             print("!!!all is good!!!")
             print(res)
             switch res {
@@ -197,6 +204,18 @@ class RPC2Tests: XCTestCase {
         self.waitForExpectations(timeout: 10, handler: nil)
         
         XCTAssertEqual(res1, res2)
+        
+        ss.disconnect()
+        XCTAssertEqual(ss.connected, .disconnecting)
+        
+        let disconnect = self.expectation(description: "disconnect")
+        DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+            disconnect.fulfill()
+        }
+        
+        self.waitForExpectations(timeout: 2, handler: nil)
+        
+        XCTAssertEqual(ss.connected, .disconnected)
     }
     
     static var allTests = [

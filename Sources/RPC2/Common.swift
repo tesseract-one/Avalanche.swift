@@ -18,3 +18,17 @@ public typealias Callback<Success, Failure: Error> = (Result<Success, Failure>)-
 public protocol FactoryBase {
     associatedtype Connection
 }
+
+public enum ConnectableState {
+    case connected
+    case disconnected
+    case connecting
+    case disconnecting
+}
+
+public protocol Connectable {
+    var connected: ConnectableState {get}
+    
+    func connect()
+    func disconnect()
+}

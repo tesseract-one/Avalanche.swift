@@ -36,3 +36,17 @@ public class ServiceCore<Connection, Delegate>: ServiceCoreProtocol {
         self.delegate = nil
     }
 }
+
+extension ServiceCore: Connectable where Connection: Connectable {
+    public var connected: ConnectableState {
+        connection.connected
+    }
+    
+    public func connect() {
+        connection.connect()
+    }
+    
+    public func disconnect() {
+        connection.disconnect()
+    }
+}
