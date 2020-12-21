@@ -137,16 +137,27 @@ public class WsConnection: PersistentConnection, Connectable {
     }
     
     public func send(data: Data) {
-        let ws = self.ws
-        let dead = self.dead
-        
-        sendq.async { [weak ws] in
-            // dead is better that just weak ws, because we can get it earlier and avoid scheduled calls execution when already dead
-            if dead.load() {
+        sendq.async { [weak self] in
+            guard let this = self else {
+                return
+            }
+            // dead is better than just weak ws, because we can get it earlier and avoid scheduled calls execution when already dead
+            if this.dead.load() {
                 return
             }
             
-            ws?.send(data) //TODO: ask Yehor to provide error (last check if disconnected to resend on error)
+            this.ws.send(data) { [weak self] error in
+                guard let error = error else {
+                    return
+                }
+                
+                switch error {
+                case .disconnected:
+                    self?.send(data: data)
+                default:
+                    return
+                }
+            }
         }
     }
 }
