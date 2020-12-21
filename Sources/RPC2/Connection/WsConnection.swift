@@ -10,42 +10,6 @@ import Foundation
 import WebSocket
 import NIOConcurrencyHelpers
 
-fileprivate extension ConnectableState {
-    //have to do it this ugly way to keep original ConnectableState clean
-    static let intConnected:Int8 = 0
-    static let intDisconnected:Int8 = 1
-    static let intConnecting:Int8 = 2
-    static let intDisconnecting:Int8 = 3
-    
-    init(int: Int8) {
-        switch int {
-        case ConnectableState.intConnected:
-            self = .connected; break
-        case ConnectableState.intConnecting:
-            self = .connecting; break
-        case ConnectableState.intDisconnected:
-            self = .disconnected; break
-        case ConnectableState.intDisconnecting:
-            self = .disconnecting; break
-        default:
-            fatalError("Congrats! You broke it. Change this file back to what it was.")
-        }
-    }
-    
-    var int: Int8 {
-        switch self {
-        case .connected:
-            return ConnectableState.intConnected
-        case .disconnected:
-            return ConnectableState.intDisconnected
-        case .connecting:
-            return ConnectableState.intConnecting
-        case .disconnecting:
-            return ConnectableState.intDisconnecting
-        }
-    }
-}
-
 public class WsConnection: PersistentConnection, Connectable {
     private let queue: DispatchQueue
     private let sendq: DispatchQueue
@@ -54,19 +18,19 @@ public class WsConnection: PersistentConnection, Connectable {
     private let ws: WebSocket
     
     private var dead: NIOAtomic<Bool>
-    private var _connected: NIOAtomic<Int8>
+    private var _connected: Compartment<ConnectableState>
     
     public var sink: ConnectionCallback
     
     init(url: URL, autoconnect: Bool, queue: DispatchQueue, pool: DispatchQueue, sink: @escaping ConnectionCallback) {
         self.dead = .makeAtomic(value: false)
-        self._connected = .makeAtomic(value: ConnectableState.disconnected.int)
+        self._connected = Compartment(.disconnected, queue: DispatchQueue(label: "one.tesseract.rpc.ws.state", qos: .userInteractive, target: pool))
         
         self.url = url
         self.queue = queue
         self.sink = sink
         
-        self.sendq = DispatchQueue(label: "one.tesseract.rpc.send-queue", qos: .userInitiated, attributes: .concurrent, target: pool)
+        self.sendq = DispatchQueue(label: "one.tesseract.rpc.ws.send", qos: .userInitiated, target: pool)
         self.sendq.suspend() //don't change to .initiallyInactive. This is different
         
         self.ws = WebSocket(callbackQueue: queue)
@@ -75,13 +39,13 @@ public class WsConnection: PersistentConnection, Connectable {
         let connected = self._connected
         
         ws.onConnected = { _ in
-            connected.store(ConnectableState.connected.int)
+            connected.assign(value: .connected)
             sendq.resume()
         }
         
         ws.onDisconnected = { (_, _) in
             sendq.suspend()
-            connected.store(ConnectableState.disconnected.int)
+            connected.assign(value: .disconnected)
         }
         
         ws.onText = { [weak self] (string, _) in
@@ -99,18 +63,21 @@ public class WsConnection: PersistentConnection, Connectable {
     
     deinit {
         dead.store(true)
-        if connected != .disconnected {
-            //TODO: this is a correct behaviour and should not be modified as we need to keep the socket alive till we're sure it's disconnected. Though, a bug in WebSocket should be fixed (crash if deinitialized NOT in its own thread).
-            //So, why is this message here? Don't change this behaviour even after the bug in WebSocket is fixed.
+        if _connected != .disconnected {
+            //this is a correct behaviour and should not be modified as we need to keep the socket alive till we're sure it's disconnected. Let it gracefully finalize the communication with server. Even sservers like polite clients.
             var keepWsAlive:WebSocket? = ws
             ws.onDisconnected = { (_, _) in
                 if let _ = keepWsAlive {
                     keepWsAlive = nil
                 }
             }
-            
-            if connected != .disconnecting {
+            switch _connected.value {
+            case .disconnected:
+                ws.onDisconnected = nil
+            case .connecting, .connected:
                 ws.disconnect()
+            default:
+                break
             }
         } else {
             sendq.resume()
@@ -119,20 +86,32 @@ public class WsConnection: PersistentConnection, Connectable {
     }
     
     public var connected: ConnectableState {
-        ConnectableState(int: _connected.load())
+        _connected.value
     }
     
     public func connect() {
-        if connected == .disconnected || connected == .disconnecting {
-            _connected.store(ConnectableState.connecting.int)
-            ws.connect(url: url)
+        _connected.async { [weak self] connected in
+            guard let this = self else {
+                return
+            }
+            
+            if connected == .disconnected || connected == .disconnecting {
+                connected = .connecting
+                this.ws.connect(url: this.url)
+            }
         }
     }
     
     public func disconnect() {
-        if connected == .connected || connected == .connecting {
-            _connected.store(ConnectableState.disconnecting.int)
-            ws.disconnect()
+        _connected.async { [weak self] connected in
+            guard let this = self else {
+                return
+            }
+            
+            if connected == .connected || connected == .connecting {
+                connected = .disconnecting
+                this.ws.disconnect()
+            }
         }
     }
     
