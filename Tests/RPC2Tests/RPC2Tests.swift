@@ -157,14 +157,14 @@ class RPC2Tests: XCTestCase {
             }
         }*/
         //let base = Service(queue: queue, connection: (), encoder: JSONEncoder.rpc, decoder: JSONDecoder.rpc, delegate: ())
-        var ss: Client & Delegator & Connectable = JsonRpc(.ws(url: URL(string: "wss://api.avax-test.network/ext/bc/C/ws")!, autoconnect: false), queue: queue, encoder: JSONEncoder.rpc, decoder: JSONDecoder.rpc)
+        var ss: Client & Delegator & Connectable = JsonRpc(.ws(url: URL(string: "wss://api.avax-test.network/ext/bc/C/ws")!, autoconnect: false, pool: .global()), queue: queue, encoder: JSONEncoder.rpc, decoder: JSONDecoder.rpc)
         //var ss: Client & Delegator = JsonRpc(.ws(url: URL(string: "wss://main-rpc.linkpool.io/ws")!), queue: queue, encoder: JSONEncoder.rpc, decoder: JSONDecoder.rpc)
 //        base.call(method: "", params: "", String.self) { (res:Result<String, ServiceError<String,String>>) in
 //        }
         
-        if ss.connected == .disconnected {
-            ss.connect()
-        }
+        XCTAssertEqual(ss.connected, ConnectableState.disconnected)
+        
+        ss.connect()
         
         XCTAssertEqual(ss.connected, ConnectableState.connecting)
         
