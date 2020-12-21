@@ -48,12 +48,14 @@ public class WsConnection: PersistentConnection, Connectable {
             connected.assign(value: .disconnected)
         }
         
-        ws.onText = { [weak self] (string, _) in
-            self?.flush(string: string)
-        }
-        
         ws.onData = { [weak self] (data, _) in //make Either<Data, String>
-            self?.flush(data: data)
+            switch data {
+            case .binary(let data):
+                self?.flush(data: data)
+            case .text(let text):
+                self?.flush(string: text)
+            }
+            
         }
         
         if autoconnect {
