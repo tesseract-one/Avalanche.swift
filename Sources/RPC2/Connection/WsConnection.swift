@@ -10,6 +10,17 @@ import Foundation
 import WebSocket
 import NIOConcurrencyHelpers
 
+extension WebSocketError {
+    var connection: ConnectionError {
+        switch self {
+        case .invalidResponseStatus(head: let head):
+            return ConnectionError.http(code: head.status.code, message: head.description.data(using: .utf8))
+        default:
+            return ConnectionError.network(cause: self)
+        }
+    }
+}
+
 public class WsConnection: PersistentConnection, Connectable {
     private let queue: DispatchQueue
     private let sendq: DispatchQueue
@@ -56,6 +67,10 @@ public class WsConnection: PersistentConnection, Connectable {
             this.flush(state: .disconnected)
         }
         
+        ws.onError = { [weak self] (error, _) in
+            self?.flush(error: error.connection)
+        }
+        
         ws.onData = { [weak self] (data, _) in //make Either<Data, String>
             switch data {
             case .binary(let data):
@@ -89,9 +104,9 @@ public class WsConnection: PersistentConnection, Connectable {
             default:
                 break
             }
-        } else {
+        }
+        if _connected == .disconnected || _connected == .connecting {
             sendq.resume()
-            //we resume if we were disconnected. Apple is ponting that if we don't, queues have undefined behaviour
         }
     }
     

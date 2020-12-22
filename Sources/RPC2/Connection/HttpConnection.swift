@@ -39,7 +39,7 @@ public class HttpConnection: SingleShotConnection {
             if let error = error {
                 self.queue.async { response(.failure(.network(cause: error))) }
             } else {
-                let status = urlResponse.statusCode
+                let status = UInt(urlResponse.statusCode)
                 self.queue.async {
                     if status >= 300 || status < 200 {
                         response(.failure(.http(code: status, message: data)))

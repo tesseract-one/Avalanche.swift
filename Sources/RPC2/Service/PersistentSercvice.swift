@@ -38,7 +38,11 @@ extension ServiceCore where Connection: PersistentConnection, Delegate: AnyObjec
     }
     
     func process(error: ServiceError) {
-        //TODO: flush it to a proper disposal
+        guard let delegate = self.delegate as? ErrorDelegate else {
+            return
+        }
+        
+        delegate.error(error)
     }
     
     func process(notification: String, data: Data) {

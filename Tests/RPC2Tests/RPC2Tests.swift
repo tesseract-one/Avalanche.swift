@@ -70,21 +70,41 @@ protocol SSSP {
     }
 }*/
 
-public class TestDelegate: ConnectableDelegate {
-    private let connectedExpectation: XCTestExpectation
+public class ConnectDelegate: ConnectableDelegate {
+    private let connected: XCTestExpectation
     private var _state: ConnectableState
     
-    init(connectedExpectation: XCTestExpectation) {
-        self.connectedExpectation = connectedExpectation
-        
+    init(connected: XCTestExpectation) {
+        self.connected = connected
         self._state = .disconnected
     }
     
     public func state(_ state: ConnectableState) {
         if state == .connected && _state == .connecting {
-            connectedExpectation.fulfill()
+            connected.fulfill()
         }
         _state = state
+    }
+}
+
+public class ErrorDelegate: ConnectableDelegate, RPC2.ErrorDelegate {
+    private let error: XCTestExpectation
+    private var _state: ConnectableState
+    
+    init(error: XCTestExpectation) {
+        self.error = error
+        self._state = .disconnected
+    }
+    
+    public func state(_ state: ConnectableState) {
+        _state = state
+    }
+    
+    public func error(_ error: ServiceError) {
+        if _state == .connecting {
+            self.error.fulfill()
+        }
+        print(error)
     }
 }
 
@@ -173,11 +193,16 @@ class RPC2Tests: XCTestCase {
         }*/
         //let base = Service(queue: queue, connection: (), encoder: JSONEncoder.rpc, decoder: JSONDecoder.rpc, delegate: ())
         var ss: Client & Delegator & Connectable = JsonRpc(.ws(url: URL(string: "wss://api.avax-test.network/ext/bc/C/ws")!, autoconnect: false, pool: .global()), queue: queue, encoder: JSONEncoder.rpc, decoder: JSONDecoder.rpc)
+        
+        var sse: Delegator = JsonRpc(.ws(url: URL(string: "wss://api.avax-test.network/ext/bc/C/ws1")!, pool: .global()), queue: queue, encoder: JSONEncoder.rpc, decoder: JSONDecoder.rpc)
+        
+        
         //var ss: Client & Delegator = JsonRpc(.ws(url: URL(string: "wss://main-rpc.linkpool.io/ws")!), queue: queue, encoder: JSONEncoder.rpc, decoder: JSONDecoder.rpc)
 //        base.call(method: "", params: "", String.self) { (res:Result<String, ServiceError<String,String>>) in
 //        }
         
-        ss.delegate = TestDelegate(connectedExpectation: self.expectation(description: "Connected"))
+        ss.delegate = ConnectDelegate(connected: self.expectation(description: "Connected"))
+        sse.delegate = ErrorDelegate(error: self.expectation(description: "Error"))
         
         XCTAssertEqual(ss.connected, ConnectableState.disconnected)
         
@@ -230,6 +255,8 @@ class RPC2Tests: XCTestCase {
         self.waitForExpectations(timeout: 2, handler: nil)
         
         XCTAssertEqual(ss.connected, .disconnected)
+        
+        ss.connect()
     }
     
     static var allTests = [

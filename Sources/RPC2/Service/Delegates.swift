@@ -15,6 +15,10 @@ public protocol ConnectableDelegate {
     func state(_ state: ConnectableState)
 }
 
+public protocol ErrorDelegate {
+    func error(_ error: ServiceError)
+}
+
 //ErrorDelegate
 //StateDelegate
 //ServiceDelegate

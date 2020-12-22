@@ -9,7 +9,7 @@ import Foundation
 
 public enum ConnectionError: Error {
     case network(cause: Error)
-    case http(code: Int, message: Data?)
+    case http(code: UInt, message: Data?)
     case unknown(cause: Error?)
 }
 
