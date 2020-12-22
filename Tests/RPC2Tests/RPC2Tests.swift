@@ -200,7 +200,7 @@ class RPC2Tests: XCTestCase {
         
         //let ssszzzz:SingleShotConnectionFactory = .http(url: URL(string: "http://google.com/")!)
         //let service = JsonRpc(.http(url: URL(string: "https://api.avax-test.network/ext/bc/C/rpc")!), queue: queue, encoder: encoder, decoder: decoder)
-        let service = JsonRpc(.http(url: URL(string: "https://main-rpc.linkpool.io/")!), queue: queue, encoder: encoder, decoder: decoder)
+        let service = JsonRpc(.http(url: URL(string: "https://main-rpc.linkpool.io/")!), queue: queue)
         let expectationWeb3 = self.expectation(description: "http")
         
         var res1: String = ""
@@ -227,9 +227,9 @@ class RPC2Tests: XCTestCase {
         }*/
         //let base = Service(queue: queue, connection: (), encoder: JSONEncoder.rpc, decoder: JSONDecoder.rpc, delegate: ())
         //var ss: Client & Delegator & Connectable = JsonRpc(.ws(url: URL(string: "wss://api.avax-test.network/ext/bc/C/ws")!, autoconnect: false, pool: .global()), queue: queue, encoder: JSONEncoder.rpc, decoder: JSONDecoder.rpc)
-        var ss: Client & Delegator & Connectable = JsonRpc(.ws(url: URL(string: "wss://main-rpc.linkpool.io/ws")!, autoconnect: false, pool: .global()), queue: queue, encoder: JSONEncoder.rpc, decoder: JSONDecoder.rpc)
+        var ss: Client & Delegator & Connectable = JsonRpc(.ws(url: URL(string: "wss://main-rpc.linkpool.io/ws")!, autoconnect: false, pool: .global()), queue: queue)
         
-        var sse: Delegator = JsonRpc(.ws(url: URL(string: "wss://api.avax-test.network/ext/bc/C/ws1")!, pool: .global()), queue: queue, encoder: JSONEncoder.rpc, decoder: JSONDecoder.rpc)
+        var sse: Delegator = JsonRpc(.ws(url: URL(string: "wss://api.avax-test.network/ext/bc/C/ws1")!, pool: .global()), queue: queue)
         
         
         //var ss: Client & Delegator = JsonRpc(.ws(url: URL(string: "wss://main-rpc.linkpool.io/ws")!), queue: queue, encoder: JSONEncoder.rpc, decoder: JSONDecoder.rpc)

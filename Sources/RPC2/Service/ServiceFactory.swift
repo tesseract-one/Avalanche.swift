@@ -100,6 +100,6 @@ public func JsonRpc<Factory: ServiceFactory>(factory: Factory, queue: DispatchQu
     return Service(core: core, caller: caller)
 }
 
-public func JsonRpc<Factory: ServiceFactory>(_ cfp: ServiceFactoryProvider<Factory>, queue: DispatchQueue, encoder: ContentEncoder, decoder:ContentDecoder) -> Service<ServiceCore<Factory.Connection, Factory.Delegate>> {
+public func JsonRpc<Factory: ServiceFactory>(_ cfp: ServiceFactoryProvider<Factory>, queue: DispatchQueue, encoder: ContentEncoder = JSONEncoder.rpc, decoder:ContentDecoder = JSONDecoder.rpc) -> Service<ServiceCore<Factory.Connection, Factory.Delegate>> {
     JsonRpc(factory: cfp.factory, queue: queue, encoder: encoder, decoder: decoder)
 }
