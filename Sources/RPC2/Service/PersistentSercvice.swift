@@ -29,8 +29,20 @@ extension ServiceCore: ResponseClosuresRegistry where Connection: PersistentConn
 }
 
 extension ServiceCore where Connection: PersistentConnection {
+    func process(state: ConnectableState) {
+        //TODO: flush it to a proper disposal
+    }
+    
     func process(error: ServiceError) {
         //TODO: flush it to a proper disposal
+    }
+    
+    func process(notification: String, data: Data) {
+        //TODO: create "parsable", flush to delegate and forget
+    }
+    
+    func process(request: String, id: RPCID, data: Data) {
+        //TODO: create "parsable", flush to delegate, and send back the result
     }
     
     func process(header: EnvelopeHeader, data: Data) {
@@ -42,6 +54,7 @@ extension ServiceCore where Connection: PersistentConnection {
             process(error: .envelope(header: header, description: "Unknown RPC version: " + version))
             break
         case .request(id: let id, method: let method):
+            process(request: method, id: id, data: data)
             break
         case .response(id: let id):
             self.process(response: data, id: id) { [weak self] in
@@ -49,6 +62,7 @@ extension ServiceCore where Connection: PersistentConnection {
             }
             break
         case .notification(method: let method):
+            process(notification: method, data: data)
             break
         }
     }
@@ -65,16 +79,16 @@ extension ServiceCore where Connection: PersistentConnection {
         }
     }
     
-    func process(_ result: Result<Data?, ConnectionError>) {
-        switch result {
-        case .success(let data?):
+    func process(message: ConnectionMessage) {
+        switch message {
+        case .data(let data):
             process(data: data)
             break
-        case .failure(let error):
+        case .error(let error):
             process(error: .connection(cause: error))
             break
-        default:
-            //ignoring empty data. a fluke? certainly not a thing I would want to know about
+        case .state(let state):
+            process(state: state)
             break
         }
     }

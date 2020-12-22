@@ -64,13 +64,13 @@ extension PersistentServiceFactory where Self: PersistentConnectionFactory {
     public func core(queue: DispatchQueue, encoder: ContentEncoder, decoder:ContentDecoder) -> ServiceCore<Connection, Delegate> {
         var this:WeakRef<ServiceCore<Connection, Delegate>> = WeakRef(ref: nil)
             
-            let conn = self.connection(queue: queue) { res in
+            let conn = self.connection(queue: queue) { message in
                 guard let this = this.ref else {
                     //we're dead here
                     return
                 }
                 
-                this.process(res)
+                this.process(message: message)
             }
         
             

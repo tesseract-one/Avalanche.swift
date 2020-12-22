@@ -20,9 +20,9 @@ public class WsConnection: PersistentConnection, Connectable {
     private var dead: NIOAtomic<Bool>
     private var _connected: Compartment<ConnectableState>
     
-    public var sink: ConnectionCallback
+    public var sink: ConnectionSink
     
-    init(url: URL, autoconnect: Bool, queue: DispatchQueue, pool: DispatchQueue, sink: @escaping ConnectionCallback) {
+    init(url: URL, autoconnect: Bool, queue: DispatchQueue, pool: DispatchQueue, sink: @escaping ConnectionSink) {
         self.dead = .makeAtomic(value: false)
         self._connected = Compartment(.disconnected, queue: DispatchQueue(label: "one.tesseract.rpc.ws.state", qos: .userInteractive, target: pool))
         
@@ -117,23 +117,23 @@ public class WsConnection: PersistentConnection, Connectable {
         }
     }
     
-    private func flush(result: Result<Data?, ConnectionError>) {
+    private func flush(message: ConnectionMessage) {
         let sink = self.sink
         queue.async {
-            sink(result)
+            sink(message)
         }
     }
     
-    private func flush(data: Data?) {
-        flush(result: .success(data))
+    private func flush(data: Data) {
+        flush(message: .data(data))
     }
     
     private func flush(string: String) {
-        flush(data: string.data(using: .utf8))
+        flush(data: string.data(using: .utf8)!) //TODO: check error on conversion
     }
     
     private func flush(error: ConnectionError) {
-        flush(result: .failure(error))
+        flush(message: .error(error))
     }
     
     public func send(data: Data) {
@@ -171,7 +171,7 @@ public struct WsConnectionFactory : PersistentConnectionFactory {
     public let autoconnect: Bool
     public let pool: DispatchQueue
     
-    public func connection(queue: DispatchQueue, sink: @escaping ConnectionCallback) -> Connection {
+    public func connection(queue: DispatchQueue, sink: @escaping ConnectionSink) -> Connection {
         WsConnection(url: url, autoconnect: autoconnect, queue: queue, pool: pool, sink: sink)
     }
 }

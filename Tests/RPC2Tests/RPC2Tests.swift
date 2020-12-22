@@ -32,7 +32,7 @@ struct DummySingleShotConnection: SingleShotConnection {
 }
 
 struct DummyPersistentConnection: PersistentConnection {
-    var sink: ConnectionCallback
+    var sink: ConnectionSink
     
     func send(data: Data) {
     }
@@ -182,7 +182,6 @@ class RPC2Tests: XCTestCase {
             case .success(let ver): res2 = ver
             default:break
             }
-            
             expectation.fulfill()
         }
         

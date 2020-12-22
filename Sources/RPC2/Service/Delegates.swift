@@ -10,3 +10,7 @@ import Foundation
 public protocol Delegator {
     var delegate: AnyObject? {get set}
 }
+
+//ErrorDelegate
+//StateDelegate
+//ServiceDelegate

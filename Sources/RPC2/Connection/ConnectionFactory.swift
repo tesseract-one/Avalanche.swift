@@ -15,7 +15,7 @@ public protocol SingleShotConnectionFactory: ConnectionFactory where Connection:
 }
 
 public protocol PersistentConnectionFactory: ConnectionFactory where Connection: PersistentConnection {
-    func connection(queue: DispatchQueue, sink: @escaping ConnectionCallback) -> Connection
+    func connection(queue: DispatchQueue, sink: @escaping ConnectionSink) -> Connection
 }
 
 public protocol ConnectionFactoryProvider {

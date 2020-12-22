@@ -13,16 +13,26 @@ public enum ConnectionError: Error {
     case unknown(cause: Error?)
 }
 
-public typealias ConnectionCallback = Callback<Data?, ConnectionError>
+/// Single shot
 
-///connections
+public typealias ConnectionCallback = Callback<Data?, ConnectionError>
 
 public protocol SingleShotConnection {
     func request(data: Data?, response: @escaping ConnectionCallback)
 }
 
+/// Persistent
+
+public enum ConnectionMessage {
+    case data(_ data: Data)
+    case state(_ state: ConnectableState)
+    case error(_ error: ConnectionError)
+}
+
+public typealias ConnectionSink = (ConnectionMessage) -> Void
+
 public protocol PersistentConnection {
-    var sink: ConnectionCallback {get set}
+    var sink: ConnectionSink {get set}
     
     func send(data: Data)
 }
