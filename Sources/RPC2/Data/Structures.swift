@@ -33,6 +33,12 @@ public struct ResponseEnvelope<R: Decodable, E: Decodable>: Decodable {
     public let error: E?
 }
 
+public struct NotificationEnvelope<P: Decodable>: Decodable {
+    public let jsonrpc: String
+    public let method: String
+    public let params: P?
+}
+
 public struct EnvelopeHeader: Decodable {
     public let jsonrpc: String
     public let id: RPCID?

@@ -7,6 +7,8 @@
 
 import Foundation
 
+import Serializable
+
 import XCTest
 #if !COCOAPODS
 @testable import RPC2
@@ -70,13 +72,29 @@ protocol SSSP {
     }
 }*/
 
-public class ConnectDelegate: ConnectableDelegate {
+struct NewPendingTransactionsNotification: Decodable {
+    let subscription: String
+    let result: String
+}
+
+struct NewHeadsNotification: Decodable {
+    let subscription: String
+    let result: SerializableValue
+}
+
+public class TestDelegate: ConnectableDelegate, ServerDelegate, RPC2.ErrorDelegate {
     private let connected: XCTestExpectation
+    private var notified: XCTestExpectation?
     private var _state: ConnectableState
     
-    init(connected: XCTestExpectation) {
+    var id: String?
+    
+    init(connected: XCTestExpectation, notified: XCTestExpectation) {
         self.connected = connected
+        self.notified = notified
         self._state = .disconnected
+        
+        self.id = nil
     }
     
     public func state(_ state: ConnectableState) {
@@ -84,6 +102,22 @@ public class ConnectDelegate: ConnectableDelegate {
             connected.fulfill()
         }
         _state = state
+    }
+    
+    public func notification(method: String, params: Parsable) {
+        XCTAssertEqual(method, "eth_subscription")
+        
+        let notification = try! params.parse(to: NewHeadsNotification.self).get()!
+        XCTAssertEqual(notification.subscription, id)
+    
+        notified?.fulfill()
+        notified = nil
+        
+        print(notification.result)
+    }
+    
+    public func error(_ error: ServiceError) {
+        print(error)
     }
 }
 
@@ -165,8 +199,8 @@ class RPC2Tests: XCTestCase {
         //let ser = SSS(ser: JsonRpc(.http(url: URL(string: "http://google.com/")!), queue: queue, encoder: encoder, decoder: decoder))
         
         //let ssszzzz:SingleShotConnectionFactory = .http(url: URL(string: "http://google.com/")!)
-        let service = JsonRpc(.http(url: URL(string: "https://api.avax-test.network/ext/bc/C/rpc")!), queue: queue, encoder: encoder, decoder: decoder)
-        //let service = JsonRpc(.http(url: URL(string: "https://main-rpc.linkpool.io/")!), queue: queue, encoder: encoder, decoder: decoder)
+        //let service = JsonRpc(.http(url: URL(string: "https://api.avax-test.network/ext/bc/C/rpc")!), queue: queue, encoder: encoder, decoder: decoder)
+        let service = JsonRpc(.http(url: URL(string: "https://main-rpc.linkpool.io/")!), queue: queue, encoder: encoder, decoder: decoder)
         let expectationWeb3 = self.expectation(description: "http")
         
         var res1: String = ""
@@ -192,7 +226,8 @@ class RPC2Tests: XCTestCase {
             }
         }*/
         //let base = Service(queue: queue, connection: (), encoder: JSONEncoder.rpc, decoder: JSONDecoder.rpc, delegate: ())
-        var ss: Client & Delegator & Connectable = JsonRpc(.ws(url: URL(string: "wss://api.avax-test.network/ext/bc/C/ws")!, autoconnect: false, pool: .global()), queue: queue, encoder: JSONEncoder.rpc, decoder: JSONDecoder.rpc)
+        //var ss: Client & Delegator & Connectable = JsonRpc(.ws(url: URL(string: "wss://api.avax-test.network/ext/bc/C/ws")!, autoconnect: false, pool: .global()), queue: queue, encoder: JSONEncoder.rpc, decoder: JSONDecoder.rpc)
+        var ss: Client & Delegator & Connectable = JsonRpc(.ws(url: URL(string: "wss://main-rpc.linkpool.io/ws")!, autoconnect: false, pool: .global()), queue: queue, encoder: JSONEncoder.rpc, decoder: JSONDecoder.rpc)
         
         var sse: Delegator = JsonRpc(.ws(url: URL(string: "wss://api.avax-test.network/ext/bc/C/ws1")!, pool: .global()), queue: queue, encoder: JSONEncoder.rpc, decoder: JSONDecoder.rpc)
         
@@ -201,7 +236,8 @@ class RPC2Tests: XCTestCase {
 //        base.call(method: "", params: "", String.self) { (res:Result<String, ServiceError<String,String>>) in
 //        }
         
-        ss.delegate = ConnectDelegate(connected: self.expectation(description: "Connected"))
+        let delegate = TestDelegate(connected: self.expectation(description: "Connected"), notified: self.expectation(description: "Notified"))
+        ss.delegate = delegate
         sse.delegate = ErrorDelegate(error: self.expectation(description: "Error"))
         
         XCTAssertEqual(ss.connected, ConnectableState.disconnected)
@@ -215,7 +251,6 @@ class RPC2Tests: XCTestCase {
         var res2 = ""
         
         ss.call(method: "web3_clientVersion", params: Nil.nil, String.self, String.self) { res in
-            XCTAssertEqual(ss.connected, .connected)
             print("!!!all is good!!!")
             print(res)
             switch res {
@@ -225,22 +260,35 @@ class RPC2Tests: XCTestCase {
             expectation.fulfill()
         }
         
+        //let ser = "logs".serializable
+        
+//        ss.call(method: "eth_subscribe", params: ["logs".serializable, SerializableValue(["address": SerializableValue.nil, "topics": .nil])], String.self, String.self) { res in
+        ss.call(method: "eth_subscribe", params: ["newHeads"], String.self, String.self) { res in
+            switch res {
+            case .success(let id):
+                delegate.id = id
+                break
+            case .failure(let err):
+                XCTFail(err.localizedDescription)
+            }
+        }
+        
         DispatchQueue.global().async {
             print("I'm fine")
         }
         
-        for n in 0...100 {
+        /*for n in 0...100 {
             print("About to launch #", n)
             ss.call(method: "web3_clientVersion", params: Nil.nil, String.self, String.self) { res in
                 print("returned #", n)
             }
-        }
+        }*/
         
         DispatchQueue.global().async {
             print("I'm still fine")
         }
         
-        self.waitForExpectations(timeout: 10, handler: nil)
+        self.waitForExpectations(timeout: 120, handler: nil)
         
         XCTAssertEqual(res1, res2)
         

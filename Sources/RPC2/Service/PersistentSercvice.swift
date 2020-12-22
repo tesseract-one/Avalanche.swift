@@ -46,7 +46,11 @@ extension ServiceCore where Connection: PersistentConnection, Delegate: AnyObjec
     }
     
     func process(notification: String, data: Data) {
-        //TODO: create "parsable", flush to delegate and forget
+        guard let delegate = self.delegate as? ServerDelegate else {
+            return
+        }
+        
+        delegate.notification(method: notification, params: EnvelopedParsable(data: data, decoder: decoder))
     }
     
     func process(request: String, id: RPCID, data: Data) {

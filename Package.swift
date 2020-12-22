@@ -14,7 +14,7 @@ let package = Package(
     dependencies: [
         // Dependencies declare other packages that this package depends on.
         // .package(url: /* package url */, from: "1.0.0"),
-        .package(url: "https://github.com/tesseract-one/WebSocket.swift.git", from: "0.0.5"),
+        .package(url: "https://github.com/tesseract-one/WebSocket.swift.git", from: "0.0.6"),
         .package(url: "https://github.com/attaswift/BigInt.git", from: "5.2.0"),
         .package(url: "https://github.com/tesseract-one/Serializable.swift.git", from: "0.1.0")
     ],
@@ -41,7 +41,7 @@ let package = Package(
             dependencies: ["Bech32"]),
         .testTarget(
             name: "RPC2Tests",
-            dependencies: ["RPC2"]),
+            dependencies: ["RPC2", "Serializable"]),
     ]
 )
 
