@@ -70,8 +70,23 @@ protocol SSSP {
     }
 }*/
 
-
-
+public class TestDelegate: ConnectableDelegate {
+    private let connectedExpectation: XCTestExpectation
+    private var _state: ConnectableState
+    
+    init(connectedExpectation: XCTestExpectation) {
+        self.connectedExpectation = connectedExpectation
+        
+        self._state = .disconnected
+    }
+    
+    public func state(_ state: ConnectableState) {
+        if state == .connected && _state == .connecting {
+            connectedExpectation.fulfill()
+        }
+        _state = state
+    }
+}
 
 class RPC2Tests: XCTestCase {
     func testPlayground() {
@@ -162,6 +177,8 @@ class RPC2Tests: XCTestCase {
 //        base.call(method: "", params: "", String.self) { (res:Result<String, ServiceError<String,String>>) in
 //        }
         
+        ss.delegate = TestDelegate(connectedExpectation: self.expectation(description: "Connected"))
+        
         XCTAssertEqual(ss.connected, ConnectableState.disconnected)
         
         ss.connect()
@@ -169,8 +186,6 @@ class RPC2Tests: XCTestCase {
         XCTAssertEqual(ss.connected, ConnectableState.connecting)
         
         let expectation = self.expectation(description: "ws")
-        
-        ss.delegate = expectation
         
         var res2 = ""
         

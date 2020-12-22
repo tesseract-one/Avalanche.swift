@@ -11,6 +11,10 @@ public protocol Delegator {
     var delegate: AnyObject? {get set}
 }
 
+public protocol ConnectableDelegate {
+    func state(_ state: ConnectableState)
+}
+
 //ErrorDelegate
 //StateDelegate
 //ServiceDelegate

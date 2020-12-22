@@ -35,17 +35,25 @@ public class WsConnection: PersistentConnection, Connectable {
         
         self.ws = WebSocket(callbackQueue: queue)
         
-        let sendq = self.sendq
-        let connected = self._connected
-        
-        ws.onConnected = { _ in
-            connected.assign(value: .connected)
-            sendq.resume()
+        ws.onConnected = { [weak self] _ in
+            guard let this = self else {
+                return
+            }
+            
+            this._connected.assign(value: .connected)
+            this.flush(state: .connected)
+            
+            this.sendq.resume()
         }
         
-        ws.onDisconnected = { (_, _) in
-            sendq.suspend()
-            connected.assign(value: .disconnected)
+        ws.onDisconnected = { [weak self] (_, _) in
+            guard let this = self else {
+                return
+            }
+            
+            this.sendq.suspend()
+            this._connected.assign(value: .disconnected)
+            this.flush(state: .disconnected)
         }
         
         ws.onData = { [weak self] (data, _) in //make Either<Data, String>
@@ -99,6 +107,7 @@ public class WsConnection: PersistentConnection, Connectable {
             
             if connected == .disconnected || connected == .disconnecting {
                 connected = .connecting
+                this.flush(state: .connecting)
                 this.ws.connect(url: this.url)
             }
         }
@@ -112,6 +121,7 @@ public class WsConnection: PersistentConnection, Connectable {
             
             if connected == .connected || connected == .connecting {
                 connected = .disconnecting
+                this.flush(state: .disconnecting)
                 this.ws.disconnect()
             }
         }
@@ -122,6 +132,10 @@ public class WsConnection: PersistentConnection, Connectable {
         queue.async {
             sink(message)
         }
+    }
+    
+    private func flush(state: ConnectableState) {
+        flush(message: .state(state))
     }
     
     private func flush(data: Data) {

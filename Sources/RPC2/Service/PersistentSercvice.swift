@@ -28,9 +28,13 @@ extension ServiceCore: ResponseClosuresRegistry where Connection: PersistentConn
     }
 }
 
-extension ServiceCore where Connection: PersistentConnection {
+extension ServiceCore where Connection: PersistentConnection, Delegate: AnyObject {
     func process(state: ConnectableState) {
-        //TODO: flush it to a proper disposal
+        guard let delegate = self.delegate as? ConnectableDelegate else {
+            return
+        }
+        
+        delegate.state(state)
     }
     
     func process(error: ServiceError) {
