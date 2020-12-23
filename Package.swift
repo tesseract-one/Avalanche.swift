@@ -28,9 +28,6 @@ let package = Package(
             name: "Bech32",
             dependencies: []),
         .target(
-            name: "RPC",
-            dependencies: []),
-        .target(
             name: "RPC2",
             dependencies: ["WebSocket"]),
         .testTarget(
