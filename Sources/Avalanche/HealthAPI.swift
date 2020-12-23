@@ -7,7 +7,7 @@
 
 import Foundation
 import Serializable
-import RPC2
+import RPC
 
 public struct AvalancheHealthApiInfo: AvalancheApiInfo {
     public let apiPath: String = "/ext/health"

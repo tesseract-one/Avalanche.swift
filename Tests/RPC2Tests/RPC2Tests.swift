@@ -11,7 +11,7 @@ import Serializable
 
 import XCTest
 #if !COCOAPODS
-@testable import RPC2
+@testable import RPC
 #else
 @testable import Avalanche
 #endif
@@ -24,7 +24,7 @@ struct NewHeadsNotification: Decodable {
     let result: SerializableValue
 }
 
-public class TestDelegate: ConnectableDelegate, ServerDelegate, RPC2.ErrorDelegate {
+public class TestDelegate: ConnectableDelegate, ServerDelegate, RPC.ErrorDelegate {
     private let connected: XCTestExpectation
     private var notified: XCTestExpectation?
     private var _state: ConnectableState
@@ -63,7 +63,7 @@ public class TestDelegate: ConnectableDelegate, ServerDelegate, RPC2.ErrorDelega
     }
 }
 
-public class ErrorDelegate: ConnectableDelegate, RPC2.ErrorDelegate {
+public class ErrorDelegate: ConnectableDelegate, RPC.ErrorDelegate {
     private let error: XCTestExpectation
     private var _state: ConnectableState
     

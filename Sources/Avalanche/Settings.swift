@@ -7,7 +7,7 @@
 
 import Foundation
 
-import RPC2
+import RPC
 
 public struct AvalancheSettings {
     let queue: DispatchQueue
