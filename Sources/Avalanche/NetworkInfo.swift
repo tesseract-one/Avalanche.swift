@@ -78,6 +78,7 @@ public class AvalancheDefaultNetworkInfoProvider: AvalancheNetworkInfoProvider {
     }()
     
     private static func addNonVmApis(to info: AvalancheDefaultApiInfoProvider) {
+        info.setInfo(info: AvalancheInfoApiInfo(), for: AvalancheInfoApi.self)
         info.setInfo(info: AvalancheHealthApiInfo(), for: AvalancheHealthApi.self)
     }
     
