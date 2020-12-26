@@ -30,10 +30,10 @@ public class Avalanche: AvalancheCore {
         didSet { lock.unlock(); clearApis() }
     }
     
-    public required init(url: URL, keychains: AvalancheKeychainFactory, networkInfo: AvalancheNetworkInfoProvider, settings: AvalancheSettings) {
+    public required init(url: URL, keychains: AvalancheKeychainFactory, network: AvalancheNetwork, networkInfo: AvalancheNetworkInfoProvider = AvalancheDefaultNetworkInfoProvider.default, settings: AvalancheSettings = .default) {
         self._url = url
         self.apis = [:]
-        self.network = .main
+        self.network = network
         self.keychains = keychains
         self.networkInfo = networkInfo
         self.settings = settings

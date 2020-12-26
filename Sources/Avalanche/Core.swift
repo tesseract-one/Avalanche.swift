@@ -24,6 +24,7 @@ public protocol AvalancheCore: class {
     init(
         url: URL,
         keychains: AvalancheKeychainFactory,
+        network: AvalancheNetwork,
         networkInfo: AvalancheNetworkInfoProvider,
         settings: AvalancheSettings
     )
@@ -47,17 +48,8 @@ extension AvalancheCore {
         let provider = AvalancheDefaultNetworkInfoProvider()
         let netInfo = AvalancheDefaultNetworkInfo(hrp: hrp, apiInfo: apiInfo)
         provider.setInfo(info: netInfo, for: network)
-        self.init(url: url, keychains: keychains, networkInfo: provider, settings: settings)
+        self.init(url: url, keychains: keychains, network: network, networkInfo: provider, settings: settings)
         self.network = network
     }
     
-    public init(
-        url: URL,
-        keychains: AvalancheKeychainFactory,
-        network: AvalancheNetwork = .main,
-        networkInfo: AvalancheNetworkInfoProvider = AvalancheDefaultNetworkInfoProvider.default,
-        settings: AvalancheSettings = .default
-    ) {
-        self.init(url: url, keychains: keychains, networkInfo: networkInfo, settings: settings)
-    }
 }

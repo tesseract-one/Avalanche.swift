@@ -6,7 +6,7 @@ import XCTest
 final class AvalancheHealthTests: XCTestCase {
     func testGetLiveness() {
         let keychain = MockKeychainFactory()
-        let ava = Avalanche(url: URL(string: "https://api.avax-test.network")!, keychains: keychain)
+        let ava = Avalanche(url: URL(string: "https://api.avax-test.network")!, keychains: keychain, network: .test)
         
         let expect = expectation(description: "RPC Call should work")
         

@@ -37,12 +37,27 @@ public class AvalancheInfoApi: AvalancheApi {
     }
     
     //TODO: create alias enum
-    //TODO: figure out a better error handling
     public func getBlockchainID(alias: String, cb: @escaping RequestCallback<GetBlockchainIDParams, GetBlockchainIDResponse, SerializableValue>) {
         service.call(
             method: "info.getBlockchainID",
             params: GetBlockchainIDParams(alias: alias),
             GetBlockchainIDResponse.self,
+            SerializableValue.self,
+            response: cb
+        )
+    }
+    
+    
+    
+    public struct GetNetworkIDResponse: Decodable {
+        let networkID: String
+    }
+    
+    public func getNetworkID(cb: @escaping RequestCallback<Nil, GetNetworkIDResponse, SerializableValue>) {
+        service.call(
+            method: "info.getNetworkID",
+            params: .nil,
+            GetNetworkIDResponse.self,
             SerializableValue.self,
             response: cb
         )

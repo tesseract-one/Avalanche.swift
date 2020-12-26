@@ -13,7 +13,7 @@ final class AvalancheInfoTests: XCTestCase {
     var ava:Avalanche!
         
     override func setUp() {
-        ava = Avalanche(url: URL(string: "https://api.avax-test.network")!, keychains: keychain)
+        ava = Avalanche(url: URL(string: "https://api.avax-test.network")!, keychains: keychain, network: .test)
     }
         
     func testGetBlockchainID() {
@@ -21,6 +21,17 @@ final class AvalancheInfoTests: XCTestCase {
         
         ava.info.getBlockchainID(alias: "X") { result in
             XCTAssertFalse(try! result.get().blockchainID.isEmpty)
+            success.fulfill()
+        }
+        
+        waitForExpectations(timeout: 10, handler: nil)
+    }
+    
+    func testNetworkID() {
+        let success = expectation(description: "success")
+        
+        ava.info.getNetworkID { result in
+            XCTAssertEqual(String(self.ava.network.networkId), try! result.get().networkID)
             success.fulfill()
         }
         
