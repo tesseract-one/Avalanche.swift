@@ -26,11 +26,24 @@ public struct RequestEnvelope<P: Encodable>: Encodable {
     public let params: P
 }
 
+public struct ResponseError<T> {
+    public let code: Int
+    public let message: String
+    
+    public let data:T?
+}
+
+extension ResponseError: Decodable where T: Decodable {
+}
+
+extension ResponseError: Encodable where T: Encodable {
+}
+
 public struct ResponseEnvelope<R: Decodable, E: Decodable>: Decodable {
     public let jsonrpc: String
     public let id: RPCID
     public let result: R?
-    public let error: E?
+    public let error: ResponseError<E>?
 }
 
 public struct NotificationEnvelope<P: Decodable>: Decodable {
