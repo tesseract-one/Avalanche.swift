@@ -28,8 +28,15 @@ public class AvalancheMetricsApi: AvalancheApi {
         self.decoder = settings.decoder
     }
     
-    public func getMetrics(cb: @escaping RequestCallback<Nil, SerializableValue, SerializableValue>) {
-        let decoder = self.decoder
+    public enum MetricsError: Decodable {
+        public init(from decoder: Decoder) throws {
+            fatalError("conformance only. Should never be called")
+        }
+        
+        case malformed(data: Data, message: String)
+    }
+    
+    public func getMetrics(cb: @escaping RequestCallback<Nil, String, MetricsError>) {
         connection.request(data: nil) { response in
             cb(response.mapError {
                 .service(error: .connection(cause: $0))
@@ -37,11 +44,15 @@ public class AvalancheMetricsApi: AvalancheApi {
                 guard let data = data else {
                     return .failure(RequestError.empty)
                 }
-                return decoder.tryDecode(SerializableValue.self, from: data).mapError { ce in
-                    .service(error: .codec(cause: ce))
-                }
+                return String(data: data, encoding: .utf8).map {.success($0)} ?? .failure(.custom(description: .decodeError, cause: .malformed(data: data, message: .decodeError)))
             })
         }
+    }
+}
+
+private extension String {
+    static var decodeError: String {
+        "Unable to decode Data to String"
     }
 }
 

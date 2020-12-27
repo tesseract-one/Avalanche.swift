@@ -20,7 +20,7 @@ final class MetricsTests: XCTestCase {
         ava.metrics.getMetrics { result in
             switch result {
             case .success(let value):
-                XCTAssertFalse(value.isNil)
+                XCTAssertFalse(value.isEmpty)
                 break
             case .failure(let error):
                 switch error {
