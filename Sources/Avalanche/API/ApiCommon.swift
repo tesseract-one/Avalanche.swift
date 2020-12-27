@@ -1,5 +1,5 @@
 //
-//  Common.swift
+//  ApiCommon.swift
 //  
 //
 //  Created by Daniel Leping on 27/12/2020.
