@@ -12,15 +12,12 @@ import XCTest
 
 import RPC
     
-final class KeystoreTests: XCTestCase {
-    let keychain = MockKeychainFactory()
-    var ava:Avalanche!
-    
+final class KeystoreTests: AvalancheTestCase {
     let username = String("testuser") + String(UInt64.random(in: 0..<UInt64.max))
     let password = "p@@@$$$123#$%" //Mmm... Secure!
         
     override func setUp() {
-        ava = Avalanche(url: URL(string: "https://api.avax-test.network")!, keychains: keychain, network: .test)
+        super.setUp()
         
         let expectation = self.expectation(description: "setup")
         
@@ -41,6 +38,8 @@ final class KeystoreTests: XCTestCase {
         }
         
         self.waitForExpectations(timeout: 10, handler: nil)
+        
+        super.tearDown()
     }
     
     func testListUsers() {

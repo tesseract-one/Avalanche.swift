@@ -10,14 +10,7 @@ import XCTest
 
 import RPC
     
-final class IPCTests: XCTestCase {
-    let keychain = MockKeychainFactory()
-    var ava:Avalanche!
-        
-    override func setUp() {
-        ava = Avalanche(url: URL(string: "https://api.avax-test.network")!, keychains: keychain, network: .test)
-    }
-    
+final class IPCTests: AvalancheTestCase {
     func testPublishBlockchain() {
         let expectation = self.expectation(description: "ipcs.publishBlockchain")
         

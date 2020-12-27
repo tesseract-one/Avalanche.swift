@@ -10,16 +10,9 @@ import XCTest
 
 import RPC
     
-final class AuthTests: XCTestCase {
-    let keychain = MockKeychainFactory()
-    var ava:Avalanche!
-    
+final class AuthTests: AvalancheTestCase {
     let password = "password"
     let passwordNew = "passwordNew"
-        
-    override func setUp() {
-        ava = Avalanche(url: URL(string: "https://api.avax-test.network")!, keychains: keychain, network: .test)
-    }
     
     func testNewRevokeToken() {
         let expectationNew = self.expectation(description: "auth.newToken")

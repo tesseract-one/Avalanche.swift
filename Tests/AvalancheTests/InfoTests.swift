@@ -8,14 +8,7 @@
 import XCTest
 @testable import Avalanche
     
-final class InfoTests: XCTestCase {
-    let keychain = MockKeychainFactory()
-    var ava:Avalanche!
-        
-    override func setUp() {
-        ava = Avalanche(url: URL(string: "https://api.avax-test.network")!, keychains: keychain, network: .test)
-    }
-        
+final class InfoTests: AvalancheTestCase {
     func testGetBlockchainID() {
         let success = expectation(description: "success")
         

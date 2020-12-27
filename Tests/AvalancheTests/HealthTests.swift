@@ -3,12 +3,9 @@ import XCTest
 
 
     
-final class HealthTests: XCTestCase {
+final class HealthTests: AvalancheTestCase {
     func testGetLiveness() {
-        let keychain = MockKeychainFactory()
-        let ava = Avalanche(url: URL(string: "https://api.avax-test.network")!, keychains: keychain, network: .test)
-        
-        let expect = expectation(description: "RPC Call should work")
+        let expect = expectation(description: "getLiveness")
         
         ava.health.getLiveness() { result in
             XCTAssertTrue(try! result.get().healthy)

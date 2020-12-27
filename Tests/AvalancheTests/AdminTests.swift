@@ -10,14 +10,7 @@ import XCTest
 
 import RPC
     
-final class AdminTests: XCTestCase {
-    let keychain = MockKeychainFactory()
-    var ava:Avalanche!
-        
-    override func setUp() {
-        ava = Avalanche(url: URL(string: "https://api.avax-test.network")!, keychains: keychain, network: .test)
-    }
-    
+final class AdminTests: AvalancheTestCase {
     func testAlias() {
         let expectation = self.expectation(description: "admin.alias")
         
