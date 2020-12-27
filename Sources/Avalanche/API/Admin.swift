@@ -26,14 +26,6 @@ public class AvalancheAdminApi: AvalancheApi {
         self.service = JsonRpc(.http(url: url, session: settings.session, headers: settings.headers), queue: settings.queue, encoder: settings.encoder, decoder: settings.decoder)
     }
     
-    struct AdminResponse: Decodable {
-        let success: Bool
-        
-        func toResult<P: Encodable, E: Decodable>() -> Result<Nil, RequestError<P, E>> {
-            success ? .success(.nil) : .failure(.custom(description: "Service returned success = false", cause: nil))
-        }
-    }
-    
     public struct AliasParams: Encodable {
         let alias: String
         let endpoint: String
@@ -43,7 +35,7 @@ public class AvalancheAdminApi: AvalancheApi {
         service.call(
             method: "admin.alias",
             params: AliasParams(alias: alias, endpoint: endpoint),
-            AdminResponse.self,
+            SuccessResponse.self,
             SerializableValue.self
         ) { response in
             cb(response.flatMap { $0.toResult() })
@@ -59,7 +51,7 @@ public class AvalancheAdminApi: AvalancheApi {
         service.call(
             method: "admin.aliasChain",
             params: AliasChainParams(chain: chain, alias: alias),
-            AdminResponse.self,
+            SuccessResponse.self,
             SerializableValue.self
         ) { response in
             cb(response.flatMap { $0.toResult() })
@@ -70,7 +62,7 @@ public class AvalancheAdminApi: AvalancheApi {
         service.call(
             method: "admin.lockProfile",
             params: .nil,
-            AdminResponse.self,
+            SuccessResponse.self,
             SerializableValue.self
         ) { response in
             cb(response.flatMap { $0.toResult() })
@@ -81,7 +73,7 @@ public class AvalancheAdminApi: AvalancheApi {
         service.call(
             method: "admin.memoryProfile",
             params: .nil,
-            AdminResponse.self,
+            SuccessResponse.self,
             SerializableValue.self
         ) { response in
             cb(response.flatMap { $0.toResult() })
@@ -92,7 +84,7 @@ public class AvalancheAdminApi: AvalancheApi {
         service.call(
             method: "admin.startCPUProfiler",
             params: .nil,
-            AdminResponse.self,
+            SuccessResponse.self,
             SerializableValue.self
         ) { response in
             cb(response.flatMap { $0.toResult() })
@@ -102,7 +94,7 @@ public class AvalancheAdminApi: AvalancheApi {
         service.call(
             method: "admin.stopCPUProfiler",
             params: .nil,
-            AdminResponse.self,
+            SuccessResponse.self,
             SerializableValue.self
         ) { response in
             cb(response.flatMap { $0.toResult() })
