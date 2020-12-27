@@ -1,14 +1,15 @@
 //
-//  File.swift
+//  Keystore.swift
 //  
 //
 //  Created by Daniel Leping on 27/12/2020.
 //
 
 import Foundation
-
-import RPC
 import Serializable
+#if !COCOAPODS
+import RPC
+#endif
 
 public struct AvalancheKeystoreApiInfo: AvalancheApiInfo {
     public let apiPath: String = "/ext/keystore"

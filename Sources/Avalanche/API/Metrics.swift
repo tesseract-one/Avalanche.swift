@@ -1,14 +1,15 @@
 //
-//  File.swift
+//  Metrics.swift
 //  
 //
 //  Created by Daniel Leping on 27/12/2020.
 //
 
 import Foundation
-
-import RPC
 import Serializable
+#if !COCOAPODS
+import RPC
+#endif
 
 public struct AvalancheMetricsApiInfo: AvalancheApiInfo {
     public let apiPath: String = "/ext/metrics"

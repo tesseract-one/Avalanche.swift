@@ -1,14 +1,15 @@
 //
-//  File.swift
+//  Info.swift
 //  
 //
 //  Created by Daniel Leping on 23/12/2020.
 //
 
 import Foundation
-
-import RPC
 import Serializable
+#if !COCOAPODS
+import RPC
+#endif
 
 public struct AvalancheInfoApiInfo: AvalancheApiInfo {
     public let apiPath: String = "/ext/info"

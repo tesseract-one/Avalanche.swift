@@ -1,13 +1,14 @@
 //
-//  File.swift
+//  Settings.swift
 //  
 //
 //  Created by Daniel Leping on 17/12/2020.
 //
 
 import Foundation
-
+#if !COCOAPODS
 import RPC
+#endif
 
 public struct AvalancheSettings {
     let queue: DispatchQueue
