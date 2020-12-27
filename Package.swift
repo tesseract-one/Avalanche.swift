@@ -14,24 +14,32 @@ let package = Package(
     dependencies: [
         // Dependencies declare other packages that this package depends on.
         // .package(url: /* package url */, from: "1.0.0"),
-        .package(url: "https://github.com/daltoniam/Starscream.git", from: "4.0.3"),
+        .package(url: "https://github.com/tesseract-one/WebSocket.swift.git", from: "0.0.6"),
         .package(url: "https://github.com/attaswift/BigInt.git", from: "5.2.0"),
-        .package(url: "https://github.com/tesseract-one/Serializable.swift", from: "0.1.0")
+        .package(url: "https://github.com/tesseract-one/Serializable.swift.git", from: "0.1.0")
     ],
     targets: [
         // Targets are the basic building blocks of a package. A target can define a module or a test suite.
         // Targets can depend on other targets in this package, and on products in packages which this package depends on.
         .target(
             name: "Avalanche",
-            dependencies: ["Starscream", "BigInt", "Bech32", "Serializable"]),
+            dependencies: ["RPC", "BigInt", "Bech32", "Serializable"]),
         .target(
             name: "Bech32",
             dependencies: []),
+        .target(
+            name: "RPC",
+            dependencies: ["WebSocket"]),
         .testTarget(
             name: "AvalancheTests",
             dependencies: ["Avalanche"]),
         .testTarget(
             name: "Bech32Tests",
             dependencies: ["Bech32"]),
+        .testTarget(
+            name: "RPC2Tests",
+            dependencies: ["RPC", "Serializable"]),
     ]
 )
+
+

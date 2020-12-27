@@ -6,6 +6,7 @@
 //
 
 import Foundation
+//import RPC
 
 public typealias AvalancheResponseCallback<R, E: Error> = (Result<R, E>) -> ()
 
@@ -15,54 +16,40 @@ public enum AvalancheApiSearchError: Error {
 }
 
 public protocol AvalancheCore: class {
-    var connections: AvalancheConnectionFactory { get }
     var keychains: AvalancheKeychainFactory { get }
     var networkInfo: AvalancheNetworkInfoProvider { get }
-    
+    var settings: AvalancheSettings { get }
     var network: AvalancheNetwork { get set }
     
     init(
-        connections: AvalancheConnectionFactory,
+        url: URL,
         keychains: AvalancheKeychainFactory,
-        networkInfo: AvalancheNetworkInfoProvider
+        network: AvalancheNetwork,
+        networkInfo: AvalancheNetworkInfoProvider,
+        settings: AvalancheSettings
     )
     
     func getAPI<A: AvalancheApi>() throws -> A
     func createAPI<A: AvalancheApi>(network: AvalancheNetwork, hrp: String, info: A.Info) -> A
+    
+    func url(path: String) -> URL
 }
 
 
 extension AvalancheCore {
     public init(
-        connections: AvalancheConnectionFactory,
+        url: URL,
         keychains: AvalancheKeychainFactory,
         network: AvalancheNetwork,
         hrp: String,
-        apiInfo: AvalancheApiInfoProvider
+        apiInfo: AvalancheApiInfoProvider,
+        settings: AvalancheSettings
     ) {
         let provider = AvalancheDefaultNetworkInfoProvider()
         let netInfo = AvalancheDefaultNetworkInfo(hrp: hrp, apiInfo: apiInfo)
         provider.setInfo(info: netInfo, for: network)
-        self.init(connections: connections, keychains: keychains, networkInfo: provider)
+        self.init(url: url, keychains: keychains, network: network, networkInfo: provider, settings: settings)
         self.network = network
     }
     
-    public init(
-        url: URL,
-        keychains: AvalancheKeychainFactory,
-        network: AvalancheNetwork = .main,
-        networkInfo: AvalancheNetworkInfoProvider = AvalancheDefaultNetworkInfoProvider.default
-    ) {
-        let connections = AvalancheDefaultConnectionFactory(url: url)
-        self.init(connections: connections, keychains: keychains, networkInfo: networkInfo)
-    }
-    
-    public init(
-        url: URL, keychains: AvalancheKeychainFactory,
-        network: AvalancheNetwork, hrp: String,
-        apiInfo: AvalancheApiInfoProvider
-    ) {
-        let connections = AvalancheDefaultConnectionFactory(url: url)
-        self.init(connections: connections, keychains: keychains, network: network, hrp: hrp, apiInfo: apiInfo)
-    }
 }

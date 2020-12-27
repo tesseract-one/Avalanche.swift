@@ -73,12 +73,20 @@ public class AvalancheDefaultNetworkInfoProvider: AvalancheNetworkInfoProvider {
         provider.setInfo(info: manhattanNetInfo(), for: .manhattan)
         // AvalancheNetwork.main || AvalancheNetwork.avalanche
         provider.setInfo(info: avalancheNetInfo(), for: .avalanche)
+        // AvalancheNetwork.test || AvalancheNetwork.fuji
+        provider.setInfo(info: fujiNetInfo(), for: .fuji)
         
         return provider
     }()
     
     private static func addNonVmApis(to info: AvalancheDefaultApiInfoProvider) {
+        info.setInfo(info: AvalancheInfoApiInfo(), for: AvalancheInfoApi.self)
         info.setInfo(info: AvalancheHealthApiInfo(), for: AvalancheHealthApi.self)
+        info.setInfo(info: AvalancheMetricsApiInfo(), for: AvalancheMetricsApi.self)
+        info.setInfo(info: AvalancheAdminApiInfo(), for: AvalancheAdminApi.self)
+        info.setInfo(info: AvalancheAuthApiInfo(), for: AvalancheAuthApi.self)
+        info.setInfo(info: AvalancheIPCApiInfo(), for: AvalancheIPCApi.self)
+        info.setInfo(info: AvalancheKeystoreApiInfo(), for: AvalancheKeystoreApi.self)
     }
     
     // AvalancheNetwork.manhattan
@@ -165,5 +173,48 @@ public class AvalancheDefaultNetworkInfoProvider: AvalancheNetworkInfoProvider {
             for: AvalanchePChainApi.self
         )
         return AvalancheDefaultNetworkInfo(hrp: "avax", apiInfo: netApis)
+    }
+    
+    // AvalancheNetwork.test || AvalancheNetwork.fuji
+    private static func fujiNetInfo() -> AvalancheDefaultNetworkInfo {
+        let netApis = AvalancheDefaultApiInfoProvider()
+        addNonVmApis(to: netApis)
+        netApis.setInfo(
+            info: AvalancheXChainApi.Info(
+                txFee: .milliAVAX,
+                creationTxFee: .centiAVAX,
+                bId: "2JVSBoinj9C2J33VntvzYtVJNZdN2NKiwwKjcumHUWEb5DbBrm",
+                alias: "X"
+            ),
+            for: AvalancheXChainApi.self
+        )
+        netApis.setInfo(
+            info: AvalancheCChainApi.Info(
+                gasPrice: 470.gwei,
+                chainId: 43113,
+                bId: "yH8D7ThNJkxmtkuv2jgBa4P1Rn3Qpr4pPr7QYNfcdoS6k6HWp",
+                alias: "C"
+            ),
+            for: AvalancheCChainApi.self
+        )
+        netApis.setInfo(
+            info: AvalanchePChainApi.Info(
+                minConsumption: 0.1,
+                maxConsumption: 0.12,
+                maxStakingDuration: 31536000,
+                maxSupply: 720000000.AVAX,
+                minStake: 1.AVAX,
+                minStakeDuration: 24 * 60 * 60, //one day
+                maxStakeDuration: 365 * 24 * 60 * 60, // one year
+                minDelegationStake: 1.AVAX,
+                minDelegationFee: 2.AVAX,
+                txFee: .milliAVAX,
+                creationTxFee: .centiAVAX,
+                bId: "11111111111111111111111111111111LpoYY",
+                alias: "P"
+            ),
+            for: AvalanchePChainApi.self
+        )
+        return AvalancheDefaultNetworkInfo(hrp: "fuji", apiInfo: netApis)
     }
 }

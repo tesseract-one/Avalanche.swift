@@ -7,6 +7,7 @@
 
 import Foundation
 import Serializable
+//import RPC
 
 public protocol CChainSubscriptionType: Encodable {
     associatedtype Event: Decodable
@@ -45,11 +46,11 @@ public class CChainSubscription<Message: Decodable> {
         listeners.removeValue(forKey: id)
     }
     
-    public func unsubscribe(cb: @escaping AvalancheRpcConnectionCallback<String, Bool, CChainError>) {
+    /*//FIX: public func unsubscribe(cb: @escaping AvalancheRpcConnectionCallback<String, Bool, CChainError>) {
         api?.eth_unsubscribe(self, result: cb)
-    }
+    }*/
     
-    public var handler: (Data) -> Void {
+    /*//FIX: public var handler: (Data) -> Void {
         return { data in
             self.lock.lock()
             defer { self.lock.unlock() }
@@ -65,5 +66,5 @@ public class CChainSubscription<Message: Decodable> {
                 }
             }
         }
-    }
+    }*/
 }
