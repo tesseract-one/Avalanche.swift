@@ -61,7 +61,7 @@ Avalanche.swift deploys to macOS 10.10+, iOS 9+, watchOS 2+, tvOS 9+ and require
 
 ### Calling APIs
 
-The APIs are accessible fields on an Avalanche instance (info, health, etc.). Here is an example for a "info.getNetworkID" method call. The methods in the library are identical to the methods described in the main API [documentation](https://docs.avax.network/build/avalanchego-apis):
+The APIs are accessible fields on an Avalanche instance (info, health, etc.). Here is an example for a `info.getNetworkID` method call. The methods in the library are identical to the methods described in the main API [documentation](https://docs.avax.network/build/avalanchego-apis):
 
 ```Swift
 let ava = Avalanche(url: URL(string: "https://api.avax-test.network")!, network: .test)
