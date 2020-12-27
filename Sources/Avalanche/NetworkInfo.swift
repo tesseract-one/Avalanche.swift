@@ -84,6 +84,8 @@ public class AvalancheDefaultNetworkInfoProvider: AvalancheNetworkInfoProvider {
         info.setInfo(info: AvalancheHealthApiInfo(), for: AvalancheHealthApi.self)
         info.setInfo(info: AvalancheMetricsApiInfo(), for: AvalancheMetricsApi.self)
         info.setInfo(info: AvalancheAdminApiInfo(), for: AvalancheAdminApi.self)
+        info.setInfo(info: AvalancheAuthApiInfo(), for: AvalancheAuthApi.self)
+        info.setInfo(info: AvalancheIPCApiInfo(), for: AvalancheIPCApi.self)
     }
     
     // AvalancheNetwork.manhattan
