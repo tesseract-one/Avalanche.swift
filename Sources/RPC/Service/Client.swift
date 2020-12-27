@@ -11,6 +11,7 @@ public enum RequestError<Params: Encodable, Error: Decodable>: Swift.Error {
     case service(error: ServiceError)
     case empty //empty body has been returned in reply
     case reply(method: String, params: Params, error: ResponseError<Error>)
+    case custom(description: String, cause: Error?)
 }
 
 public typealias RequestCallback<Params: Encodable, Response: Decodable, Error: Decodable> = Callback<Response, RequestError<Params, Error>>

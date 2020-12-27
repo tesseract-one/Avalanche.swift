@@ -28,39 +28,44 @@ public class AvalancheInfoApi: AvalancheApi {
     
     /// methods
     
-    public struct GetBlockchainIDResponse: Decodable {
-        let blockchainID: String
-    }
-    
     public struct GetBlockchainIDParams: Encodable {
         let alias: String
     }
     
-    //TODO: create alias enum
-    public func getBlockchainID(alias: String, cb: @escaping RequestCallback<GetBlockchainIDParams, GetBlockchainIDResponse, SerializableValue>) {
+    public func getBlockchainID(alias: String, cb: @escaping RequestCallback<GetBlockchainIDParams, String, SerializableValue>) {
+        struct GetBlockchainIDResponse: Decodable {
+            let blockchainID: String
+        }
+        
         service.call(
             method: "info.getBlockchainID",
             params: GetBlockchainIDParams(alias: alias),
             GetBlockchainIDResponse.self,
-            SerializableValue.self,
-            response: cb
-        )
+            SerializableValue.self
+        ) { response in
+            cb(response.map {$0.blockchainID})
+        }
     }
+
     
     
-    
-    public struct GetNetworkIDResponse: Decodable {
-        let networkID: String
-    }
-    
-    public func getNetworkID(cb: @escaping RequestCallback<Nil, GetNetworkIDResponse, SerializableValue>) {
+    public func getNetworkID(cb: @escaping RequestCallback<Nil, UInt, SerializableValue>) {
+        struct GetNetworkIDResponse: Decodable {
+            let networkID: String
+        }
+        
         service.call(
             method: "info.getNetworkID",
-            params: .nil,
+            params: Nil.nil,
             GetNetworkIDResponse.self,
-            SerializableValue.self,
-            response: cb
-        )
+            SerializableValue.self
+        ) { response in
+            cb(response.flatMap { response in
+                UInt(response.networkID).map {.success($0)}
+                    ??
+                    .failure(.custom(description: "server returned '" + response.networkID + "' ID which is not UInt", cause: nil))
+            })
+        }
     }
 }
 

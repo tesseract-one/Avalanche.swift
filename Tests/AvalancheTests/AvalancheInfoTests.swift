@@ -20,7 +20,7 @@ final class AvalancheInfoTests: XCTestCase {
         let success = expectation(description: "success")
         
         ava.info.getBlockchainID(alias: "X") { result in
-            XCTAssertFalse(try! result.get().blockchainID.isEmpty)
+            XCTAssertFalse(try! result.get().isEmpty)
             success.fulfill()
         }
         
@@ -31,7 +31,7 @@ final class AvalancheInfoTests: XCTestCase {
         let success = expectation(description: "success")
         
         ava.info.getNetworkID { result in
-            XCTAssertEqual(String(self.ava.network.networkId), try! result.get().networkID)
+            XCTAssertEqual(self.ava.network.networkId, try! result.get())
             success.fulfill()
         }
         
