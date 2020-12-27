@@ -14,10 +14,10 @@ The library allows one to issue commands to the Avalanche node APIs.
   s.author           = { 'Tesseract Systems, Inc.' => 'info@tesseract.one' }
   s.source           = { :git => 'https://github.com/tesseract-one/Avalanche.swift.git', :tag => s.version.to_s }
 
-  s.ios.deployment_target = '9.0'
-  s.osx.deployment_target = '10.10'
-  s.tvos.deployment_target = '9.0'
-  s.watchos.deployment_target = '2.0'
+  s.ios.deployment_target = '10.0'
+  s.osx.deployment_target = '10.12'
+  s.tvos.deployment_target = '10.0'
+  s.watchos.deployment_target = '6.0'
   
   s.swift_versions = ['5', '5.1', '5.2']
 
@@ -29,10 +29,10 @@ The library allows one to issue commands to the Avalanche node APIs.
     ss.dependency 'Avalanche/Bech32'
     ss.dependency 'Avalanche/RPC'
     ss.dependency 'BigInt', '~> 5.2'
-    ss.dependency 'Serializable.swift', '~> 0.1'
+    ss.dependency 'Serializable.swift', '~> 0.2'
     
     ss.test_spec 'AvalancheTests' do |test_spec|
-      test_spec.platforms = {:ios => '9.0', :osx => '10.10', :tvos => '9.0'}
+      test_spec.platforms = {:ios => '10.0', :osx => '10.12', :tvos => '10.0'}
       test_spec.source_files = 'Tests/AvalancheTests/**/*.swift'
     end
   end
@@ -41,7 +41,7 @@ The library allows one to issue commands to the Avalanche node APIs.
     ss.source_files = 'Sources/Bech32/**/*.swift'
     
     ss.test_spec 'Bech32Tests' do |test_spec|
-      test_spec.platforms = {:ios => '9.0', :osx => '10.10', :tvos => '9.0'}
+      test_spec.platforms = {:ios => '10.0', :osx => '10.12', :tvos => '10.0'}
       test_spec.source_files = 'Tests/Bech32Tests/**/*.swift'
     end
   end
@@ -49,10 +49,10 @@ The library allows one to issue commands to the Avalanche node APIs.
   s.subspec 'RPC' do |ss|
     ss.source_files = 'Sources/RPC/**/*.swift'
 
-    ss.dependency 'TesseractWebSocket', '~> 0.0.1'
+    ss.dependency 'TesseractWebSocket', '~> 0.0.7'
     
     ss.test_spec 'RPCTests' do |test_spec|
-      test_spec.platforms = {:ios => '9.0', :osx => '10.10', :tvos => '9.0'}
+      test_spec.platforms = {:ios => '10.0', :osx => '10.12', :tvos => '10.0'}
       test_spec.source_files = 'Tests/RPCTests/**/*.swift'
     end
   end
