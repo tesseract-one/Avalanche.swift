@@ -6,7 +6,6 @@
 //
 
 import Foundation
-
 import Serializable
 
 import XCTest
@@ -201,12 +200,4 @@ class RPC2Tests: XCTestCase {
         
         waitForExpectations(timeout: 10, handler: nil)
     }
-    
-    func testPlayground() {
-        
-    }
-    
-    static var allTests = [
-        ("Playground", testPlayground),
-    ]
 }

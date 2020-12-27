@@ -13,8 +13,4 @@ final class HealthTests: AvalancheTestCase {
         }
         wait(for: [expect], timeout: 10)
     }
-
-    static var allTests = [
-        ("testGetLiveness", testGetLiveness),
-    ]
 }

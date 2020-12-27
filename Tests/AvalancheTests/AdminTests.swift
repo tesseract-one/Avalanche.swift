@@ -82,9 +82,5 @@ final class AdminTests: AvalancheTestCase {
         }
         waitForExpectations(timeout: 10, handler: nil)
     }
-
-    static var allTests = [
-        ("testAlias", testAlias),
-    ]
 }
 

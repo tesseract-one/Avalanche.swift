@@ -97,8 +97,4 @@ final class KeystoreTests: AvalancheTestCase {
 
         waitForExpectations(timeout: 10, handler: nil)
     }
-
-    static var allTests = [
-        ("testListUsers", testListUsers),
-    ]
 }

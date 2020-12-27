@@ -114,10 +114,4 @@ final class InfoTests: AvalancheTestCase {
         
         waitForExpectations(timeout: 10, handler: nil)
     }
-    
-    
-
-    static var allTests = [
-        ("testGetBlockchainID", testGetBlockchainID),
-    ]
 }

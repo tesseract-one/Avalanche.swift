@@ -46,9 +46,5 @@ final class IPCTests: AvalancheTestCase {
 
         waitForExpectations(timeout: 10, handler: nil)
     }
-
-    static var allTests = [
-        ("testPublishBlockchain", testPublishBlockchain),
-    ]
 }
 

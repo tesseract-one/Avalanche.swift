@@ -37,7 +37,7 @@ let package = Package(
             name: "Bech32Tests",
             dependencies: ["Bech32"]),
         .testTarget(
-            name: "RPC2Tests",
+            name: "RPCTests",
             dependencies: ["RPC", "Serializable"]),
     ]
 )

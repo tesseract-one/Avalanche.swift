@@ -27,8 +27,8 @@ The library allows one to issue commands to the Avalanche node APIs.
     ss.source_files = 'Sources/Avalanche/**/*.swift'
 
     ss.dependency 'Avalanche/Bech32'
+    ss.dependency 'Avalanche/RPC'
     ss.dependency 'BigInt', '~> 5.2'
-    ss.dependency 'Starscream', '~> 4.0'
     ss.dependency 'Serializable.swift', '~> 0.1'
     
     ss.test_spec 'AvalancheTests' do |test_spec|
@@ -43,6 +43,17 @@ The library allows one to issue commands to the Avalanche node APIs.
     ss.test_spec 'Bech32Tests' do |test_spec|
       test_spec.platforms = {:ios => '9.0', :osx => '10.10', :tvos => '9.0'}
       test_spec.source_files = 'Tests/Bech32Tests/**/*.swift'
+    end
+  end
+  
+  s.subspec 'RPC' do |ss|
+    ss.source_files = 'Sources/RPC/**/*.swift'
+
+    ss.dependency 'TesseractWebSocket', '~> 0.0.1'
+    
+    ss.test_spec 'RPCTests' do |test_spec|
+      test_spec.platforms = {:ios => '9.0', :osx => '10.10', :tvos => '9.0'}
+      test_spec.source_files = 'Tests/RPCTests/**/*.swift'
     end
   end
   

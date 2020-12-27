@@ -54,9 +54,5 @@ final class AuthTests: AvalancheTestCase {
         }
         waitForExpectations(timeout: 10, handler: nil)
     }
-
-    static var allTests = [
-        ("testNewRevokeToken", testNewRevokeToken),
-    ]
 }
 

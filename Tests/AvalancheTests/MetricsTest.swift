@@ -22,9 +22,5 @@ final class MetricsTests: AvalancheTestCase {
         }
         waitForExpectations(timeout: 10, handler: nil)
     }
-
-    static var allTests = [
-        ("testGetMetrics", testGetMetrics),
-    ]
 }
 
