@@ -3,7 +3,7 @@ import XCTest
 
 
     
-final class AvalancheHealthTests: XCTestCase {
+final class HealthTests: XCTestCase {
     func testGetLiveness() {
         let keychain = MockKeychainFactory()
         let ava = Avalanche(url: URL(string: "https://api.avax-test.network")!, keychains: keychain, network: .test)

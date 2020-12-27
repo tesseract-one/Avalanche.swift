@@ -8,7 +8,7 @@
 import XCTest
 @testable import Avalanche
     
-final class AvalancheInfoTests: XCTestCase {
+final class InfoTests: XCTestCase {
     let keychain = MockKeychainFactory()
     var ava:Avalanche!
         

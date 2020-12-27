@@ -36,7 +36,7 @@ public protocol ContentDecoder: ContentTypeAware {
 }
 
 extension ContentEncoder {
-    func tryEncode<T: Encodable>(_ value: T) -> Result<Data, CodecError> {
+    public func tryEncode<T: Encodable>(_ value: T) -> Result<Data, CodecError> {
         Result {
             try self.encode(value)
         }.mapError { e in
@@ -50,7 +50,7 @@ extension ContentEncoder {
 }
 
 extension ContentDecoder {
-    func tryDecode<T: Decodable>(_ type: T.Type, from data: Data) -> Result<T, CodecError> {
+    public func tryDecode<T: Decodable>(_ type: T.Type, from data: Data) -> Result<T, CodecError> {
         Result {
             try self.decode(type, from: data)
         }.mapError { e in
