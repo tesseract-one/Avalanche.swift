@@ -1,7 +1,5 @@
 import XCTest
 @testable import Avalanche
-
-
     
 final class HealthTests: AvalancheTestCase {
     func testGetLiveness() {

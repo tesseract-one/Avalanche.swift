@@ -1,5 +1,5 @@
 //
-//  File.swift
+//  IPCTests.swift
 //  
 //
 //  Created by Daniel Leping on 27/12/2020.
@@ -8,8 +8,6 @@
 import XCTest
 @testable import Avalanche
 
-import RPC
-    
 final class IPCTests: AvalancheTestCase {
     func testPublishBlockchain() {
         let expectation = self.expectation(description: "ipcs.publishBlockchain")
