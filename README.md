@@ -11,16 +11,18 @@
 
 Avalanche.swift is a Swift Library for interfacing with the Avalanche Platform. The library allows one to issue commands to the Avalanche node APIs. 
 
-The APIs currently supported by default are:
+The APIs currently supported (the rest is coming really soon) are:
 
-  * Admin API
-  * AVM API (X-Chain)
-  * Health API
-  * Info API
-  * Keystore API
-  * Metrics API
-  * PlatformVM API (P-Chain)
-  * EVM API (C-Chain)
+ * [x] Admin API
+ * [x] Auth API
+ * [ ] AVM API (X-Chain)
+ * [ ] EVM API (C-Chain)
+ * [x] Health API
+ * [x] Info API
+ * [x] IPC API
+ * [x] Keystore API
+ * [x] Metrics API
+ * [ ] PlatformVM API (P-Chain)
 
 We built Avalanche.swift with ease of use in mind. With this library, any Swift developer is able to interact with a node on the Avalanche Platform who has enabled their API endpoints for the developer's consumption. We keep the library up-to-date with the latest changes in the [Avalanche Platform Specification](https://docs.avax.network). 
 
@@ -55,7 +57,26 @@ Avalanche.swift deploys to macOS 10.10+, iOS 9+, watchOS 2+, tvOS 9+ and require
     pod 'Avalanche', '~> 0.1'
     ```
 
-## Example 1 &mdash; Managing X-Chain Keys
+## Examples
+
+### Calling APIs
+
+The APIs are accessible fields on an Avalanche instance (info, health, etc.). Here is an example for a "info.getNetworkID" method call. The methods in the library are identical to the methods described in the main API [documentation](https://docs.avax.network/build/avalanchego-apis):
+
+```Swift
+let ava = Avalanche(url: URL(string: "https://api.avax-test.network")!, network: .test)
+    
+    ava.info.getNetworkID { result in
+        switch result {
+        case .success(let id):
+            print("ID is: ", id)
+        case .failure(let error):
+            print("Error occured: ", error)
+        }
+    }
+```
+
+### Managing X-Chain Keys
 
 Avalanche.swift comes with its own In-App Keychain. This KeyChain is used in the functions of the API, enabling them to sign using keys it's registered. The first step in this process is to create an instance of Avalanche.swift connected to our Avalanche Platform endpoint of choice.
 
