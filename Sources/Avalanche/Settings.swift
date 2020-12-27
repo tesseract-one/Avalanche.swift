@@ -9,6 +9,9 @@ import Foundation
 #if !COCOAPODS
 import RPC
 #endif
+#if os(Linux)
+import FoundationNetworking
+#endif
 
 public struct AvalancheSettings {
     let queue: DispatchQueue
