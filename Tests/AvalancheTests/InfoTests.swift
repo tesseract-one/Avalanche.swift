@@ -1,5 +1,5 @@
 //
-//  File.swift
+//  InfoTests.swift
 //  
 //
 //  Created by Daniel Leping on 23/12/2020.
@@ -7,7 +7,7 @@
 
 import XCTest
 @testable import Avalanche
-    
+
 final class InfoTests: AvalancheTestCase {
     func testGetBlockchainID() {
         let success = expectation(description: "success")
@@ -114,10 +114,4 @@ final class InfoTests: AvalancheTestCase {
         
         waitForExpectations(timeout: 10, handler: nil)
     }
-    
-    
-
-    static var allTests = [
-        ("testGetBlockchainID", testGetBlockchainID),
-    ]
 }

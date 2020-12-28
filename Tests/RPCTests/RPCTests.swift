@@ -6,7 +6,6 @@
 //
 
 import Foundation
-
 import Serializable
 
 import XCTest
@@ -93,7 +92,7 @@ extension URL {
     static var ethWs:URL {URL(string: "wss://main-rpc.linkpool.io/ws")!}
 }
 
-class RPC2Tests: XCTestCase {
+class RPCTests: XCTestCase {
     let queue = DispatchQueue.main
     let pool = DispatchQueue.global()
     
@@ -201,12 +200,4 @@ class RPC2Tests: XCTestCase {
         
         waitForExpectations(timeout: 10, handler: nil)
     }
-    
-    func testPlayground() {
-        
-    }
-    
-    static var allTests = [
-        ("Playground", testPlayground),
-    ]
 }

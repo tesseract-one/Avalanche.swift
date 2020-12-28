@@ -1,11 +1,14 @@
 //
-//  File.swift
+//  HttpConnection.swift
 //  
 //
 //  Created by Daniel Leping on 15/12/2020.
 //
 
 import Foundation
+#if os(Linux)
+import FoundationNetworking
+#endif
 
 public class HttpConnection: SingleShotConnection {
     private let url: URL

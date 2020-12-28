@@ -1,7 +1,5 @@
 import XCTest
 @testable import Avalanche
-
-
     
 final class HealthTests: AvalancheTestCase {
     func testGetLiveness() {
@@ -13,8 +11,4 @@ final class HealthTests: AvalancheTestCase {
         }
         wait(for: [expect], timeout: 10)
     }
-
-    static var allTests = [
-        ("testGetLiveness", testGetLiveness),
-    ]
 }

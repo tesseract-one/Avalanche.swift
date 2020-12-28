@@ -1,5 +1,5 @@
 //
-//  File.swift
+//  AuthTests.swift
 //  
 //
 //  Created by Daniel Leping on 27/12/2020.
@@ -7,8 +7,6 @@
 
 import XCTest
 @testable import Avalanche
-
-import RPC
     
 final class AuthTests: AvalancheTestCase {
     let password = "password"
@@ -54,9 +52,5 @@ final class AuthTests: AvalancheTestCase {
         }
         waitForExpectations(timeout: 10, handler: nil)
     }
-
-    static var allTests = [
-        ("testNewRevokeToken", testNewRevokeToken),
-    ]
 }
 

@@ -1,5 +1,5 @@
 //
-//  File.swift
+//  MetricsTests.swift
 //  
 //
 //  Created by Daniel Leping on 27/12/2020.
@@ -7,8 +7,6 @@
 
 import XCTest
 @testable import Avalanche
-
-
     
 final class MetricsTests: AvalancheTestCase {
     func testGetMetrics() {
@@ -22,9 +20,5 @@ final class MetricsTests: AvalancheTestCase {
         }
         waitForExpectations(timeout: 10, handler: nil)
     }
-
-    static var allTests = [
-        ("testGetMetrics", testGetMetrics),
-    ]
 }
 

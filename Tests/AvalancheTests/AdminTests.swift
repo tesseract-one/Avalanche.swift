@@ -1,5 +1,5 @@
 //
-//  File.swift
+//  AdminTests.swift
 //  
 //
 //  Created by Daniel Leping on 27/12/2020.
@@ -7,8 +7,6 @@
 
 import XCTest
 @testable import Avalanche
-
-import RPC
     
 final class AdminTests: AvalancheTestCase {
     func testAlias() {
@@ -82,9 +80,5 @@ final class AdminTests: AvalancheTestCase {
         }
         waitForExpectations(timeout: 10, handler: nil)
     }
-
-    static var allTests = [
-        ("testAlias", testAlias),
-    ]
 }
 

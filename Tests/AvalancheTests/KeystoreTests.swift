@@ -1,17 +1,13 @@
 //
-//  File.swift
+//  KeystoreTests.swift
 //  
 //
 //  Created by Daniel Leping on 27/12/2020.
 //
 
-import Foundation
-
 import XCTest
 @testable import Avalanche
 
-import RPC
-    
 final class KeystoreTests: AvalancheTestCase {
     let username = String("testuser") + String(UInt64.random(in: 0..<UInt64.max))
     let password = "p@@@$$$123#$%" //Mmm... Secure!
@@ -97,8 +93,4 @@ final class KeystoreTests: AvalancheTestCase {
 
         waitForExpectations(timeout: 10, handler: nil)
     }
-
-    static var allTests = [
-        ("testListUsers", testListUsers),
-    ]
 }

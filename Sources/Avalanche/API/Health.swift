@@ -1,5 +1,5 @@
 //
-//  HealthAPI.swift
+//  Health.swift
 //  
 //
 //  Created by Yehor Popovych on 10/26/20.
@@ -7,7 +7,9 @@
 
 import Foundation
 import Serializable
+#if !COCOAPODS
 import RPC
+#endif
 
 public struct AvalancheHealthApiInfo: AvalancheApiInfo {
     public let apiPath: String = "/ext/health"
