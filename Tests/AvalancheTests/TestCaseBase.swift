@@ -14,11 +14,11 @@ class AvalancheTestCase: XCTestCase {
     }
     
     private static func _registry(_ fac: ()->[(AvalancheTestCase.Type, Bool)]) -> [String: Bool] {
-        Dictionary(uniqueKeysWithValues: fac().map {($0.0.className(), $0.1)})
+        Dictionary(uniqueKeysWithValues: fac().map {(String(describing: $0.0), $0.1)})
     }
     
     private static var testEnabled: Bool {
-        registry[self.className()] ?? true //enabled by default
+        registry[String(describing: self)] ?? true //enabled by default
     }
     
     static let registry = _registry {
