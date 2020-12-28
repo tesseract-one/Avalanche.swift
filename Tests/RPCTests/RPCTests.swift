@@ -92,7 +92,7 @@ extension URL {
     static var ethWs:URL {URL(string: "wss://main-rpc.linkpool.io/ws")!}
 }
 
-class RPC2Tests: XCTestCase {
+class RPCTests: XCTestCase {
     let queue = DispatchQueue.main
     let pool = DispatchQueue.global()
     
