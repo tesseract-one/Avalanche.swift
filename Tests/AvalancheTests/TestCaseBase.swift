@@ -21,12 +21,6 @@ class AvalancheTestCase: XCTestCase {
         registry[self.className()] ?? true //enabled by default
     }
     
-    override class var defaultTestSuite: XCTestSuite {
-        let defaultTS = super.defaultTestSuite
-        
-        return testEnabled ? defaultTS : XCTestSuite(name: defaultTS.name)
-    }
-    
     static let registry = _registry {
         [
          test(AdminTests.self, enabled: true),
@@ -42,8 +36,10 @@ class AvalancheTestCase: XCTestCase {
     let keychain = MockKeychainFactory()
     var ava:Avalanche!
     
-    override func setUp() {
-        super.setUp()
+    override func setUpWithError() throws {
+        try super.setUpWithError()
+        
+        try XCTSkipUnless(Self.testEnabled, "Test disabled in config")
         
         self.ava = Avalanche(url: URL(string: "https://api.avax-test.network")!, keychains: keychain, network: .test)
     }
