@@ -14,17 +14,11 @@ class AvalancheTestCase: XCTestCase {
     }
     
     private static func _registry(_ fac: ()->[(AvalancheTestCase.Type, Bool)]) -> [String: Bool] {
-        Dictionary(uniqueKeysWithValues: fac().map {($0.0.className(), $0.1)})
+        Dictionary(uniqueKeysWithValues: fac().map {(String(describing: $0.0), $0.1)})
     }
     
     private static var testEnabled: Bool {
-        registry[self.className()] ?? true //enabled by default
-    }
-    
-    override class var defaultTestSuite: XCTestSuite {
-        let defaultTS = super.defaultTestSuite
-        
-        return testEnabled ? defaultTS : XCTestSuite(name: defaultTS.name)
+        registry[String(describing: self)] ?? true //enabled by default
     }
     
     static let registry = _registry {
@@ -42,8 +36,10 @@ class AvalancheTestCase: XCTestCase {
     let keychain = MockKeychainFactory()
     var ava:Avalanche!
     
-    override func setUp() {
-        super.setUp()
+    override func setUpWithError() throws {
+        try super.setUpWithError()
+        
+        try XCTSkipUnless(Self.testEnabled, "Test disabled in config")
         
         self.ava = Avalanche(url: URL(string: "https://api.avax-test.network")!, keychains: keychain, network: .test)
     }
