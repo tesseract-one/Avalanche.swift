@@ -23,7 +23,7 @@ struct NewHeadsNotification: Decodable {
     let result: SerializableValue
 }
 
-public class TestDelegate: ConnectableDelegate, ServerDelegate, RPC.ErrorDelegate {
+public class TestDelegate: ConnectableDelegate, ServerDelegate, ErrorDelegate {
     private let connected: XCTestExpectation
     private var notified: XCTestExpectation?
     private var _state: ConnectableState
@@ -62,7 +62,7 @@ public class TestDelegate: ConnectableDelegate, ServerDelegate, RPC.ErrorDelegat
     }
 }
 
-public class ErrorDelegate: ConnectableDelegate, RPC.ErrorDelegate {
+public class TestErrorDelegate: ConnectableDelegate, ErrorDelegate {
     private let error: XCTestExpectation
     private var _state: ConnectableState
     
@@ -127,7 +127,7 @@ class RPCTests: XCTestCase {
         //wrong URL
         var service: Delegator = JsonRpc(.ws(url: URL(string: "wss://api.avax-test.network/ext/bc/C/ws1")!, pool: pool), queue: queue)
         
-        service.delegate = ErrorDelegate(error: self.expectation(description: "Error"))
+        service.delegate = TestErrorDelegate(error: self.expectation(description: "Error"))
         
         self.waitForExpectations(timeout: 10, handler: nil)
     }
