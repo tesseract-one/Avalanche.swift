@@ -53,6 +53,7 @@ The library allows one to issue commands to the Avalanche node APIs.
     
     ss.test_spec 'RPCTests' do |test_spec|
       test_spec.platforms = {:ios => '10.0', :osx => '10.12', :tvos => '10.0'}
+      test_spec.dependency 'Serializable.swift', '~> 0.2'
       test_spec.source_files = 'Tests/RPCTests/**/*.swift'
     end
   end
