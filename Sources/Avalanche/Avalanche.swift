@@ -15,7 +15,7 @@ public class Avalanche: AvalancheCore {
     private let _url: URL
     public let settings: AvalancheSettings
     
-    public var keychains: AvalancheKeychainFactory {
+    public var keychain: Keychain {
         willSet { lock.lock() }
         didSet { lock.unlock(); clearApis() }
     }
@@ -30,11 +30,11 @@ public class Avalanche: AvalancheCore {
         didSet { lock.unlock(); clearApis() }
     }
     
-    public required init(url: URL, keychains: AvalancheKeychainFactory = MockKeychainFactory(), network: AvalancheNetwork, networkInfo: AvalancheNetworkInfoProvider = AvalancheDefaultNetworkInfoProvider.default, settings: AvalancheSettings = .default) {
+    public required init(url: URL, keychain: Keychain, network: AvalancheNetwork, networkInfo: AvalancheNetworkInfoProvider = AvalancheDefaultNetworkInfoProvider.default, settings: AvalancheSettings = .default) {
         self._url = url
         self.apis = [:]
         self.network = network
-        self.keychains = keychains
+        self.keychain = keychain
         self.networkInfo = networkInfo
         self.settings = settings
         self.lock = NSRecursiveLock()
