@@ -1,127 +1,70 @@
 //
-//  Keychain.swift
+//  File.swift
 //  
 //
-//  Created by Yehor Popovych on 10/4/20.
+//  Created by Daniel Leping on 07/01/2021.
 //
 
 import Foundation
 
-public enum AvalancheKeychainError: Error {
-    case addressNotFound(AvalancheAddress)
+public enum KeychainError: Error {
+    case avaAddressNotFound(address: AvaAddress)
+    case avaCantSign(data: Data, address: AvaAddress)
+    
+    case ethAddressNotFound(address: EthAddress)
+    case ethCantSign(data: Data, address: EthAddress)
+    
+    case unknown
 }
 
-public typealias AvalancheKeychainCallback<R> = AvalancheResponseCallback<R, AvalancheKeychainError>
-
-public protocol AvalancheKeychain {
-    func addresses(response: @escaping AvalancheKeychainCallback<[AvalancheAddress]>)
-    func sign(
-        message: Data, address: AvalancheAddress,
-        response: @escaping AvalancheKeychainCallback<Data>
-    )
-    func signTx(
-        tx: Any, address: AvalancheAddress,
-        response: @escaping AvalancheKeychainCallback<Any>
-    )
-    func verify(
-        message: Data, signature: Data, address: AvalancheAddress,
-        response: @escaping AvalancheKeychainCallback<Bool>
-    )
-    func mutate<R>(mutator: @escaping (AvalancheKeychainMutator) throws -> R) throws -> R
+public protocol Keychain {
+    func addresses(result: (Result<Addresses, KeychainError>)->Void)
+    
+    func sign(data: Data, by: [UniAddress], result: (Result<[UniAddress: Data], KeychainError>)->Void)
+    
+    func signAva(data: Data, by: [AvaAddress], result: (Result<[AvaAddress: Data], KeychainError>)->Void)
+    func signEth<Addr: EthAddress>(data: Data, by: [Addr], result: (Result<[Addr: Data], KeychainError>)->Void) where Addr: Hashable
 }
 
-public protocol AvalancheEthereumKeychain {
-    func addresses(response: @escaping AvalancheKeychainCallback<[Data]>)
-    func sign(
-        message: Data, address: Data,
-        response: @escaping AvalancheKeychainCallback<Data>
-    )
-    func signTx(
-        tx: Any, address: Data,
-        response: @escaping AvalancheKeychainCallback<Data>
-    )
-    func signTypedData(
-        tx: Any, address: Data,
-        response: @escaping AvalancheKeychainCallback<Data>
-    )
-    func verify(
-        message: Data, signature: Data, address: Data,
-        response: @escaping AvalancheKeychainCallback<Bool>
-    )
-    func mutate<R>(mutator: @escaping (AvalancheEthereumKeychainMutator) throws -> R) throws -> R
+public enum EmptyKeychain {
+    case empty
 }
 
-public protocol AvalancheKeychainMutator {
-    func newKey() -> AvalancheAddress
-    func importKey(pk: Data) throws -> AvalancheAddress
-    func importKey(cb58: String) throws -> AvalancheAddress
-    func exportKey(for address: AvalancheAddress) throws -> Data
-    func deleteKey(for address: AvalancheAddress) throws
-}
-
-public protocol AvalancheEthereumKeychainMutator {
-    func newKey() -> Data
-    func importKey(pk: Data) throws -> Data
-    func exportKey(for address: Data) throws -> Data
-    func deleteKey(for address: AvalancheAddress) throws
-}
-
-public protocol AvalancheKeychainFactory {
-    func avaSecp256k1Keychain(hrp: String, chainId: String, chainAlias: String?) -> AvalancheKeychain
-    func avaEthereumKeychain(network: AvalancheNetwork, chainId: UInt32) -> AvalancheEthereumKeychain
-}
-
-//temporary stub
-class MockAvalancheKeychain: AvalancheKeychain {
-    func addresses(response: @escaping AvalancheKeychainCallback<[AvalancheAddress]>) {
+extension EmptyKeychain: Keychain {
+    public func addresses(result: (Result<Addresses, KeychainError>) -> Void) {
+        result(.success(Addresses(xMain: [], xChange: [], pMain: [], pChange: [], c: [])))
     }
     
-    func sign(message: Data, address: AvalancheAddress, response: @escaping AvalancheKeychainCallback<Data>) {
+    public func sign(data: Data, by addresses: [UniAddress], result: (Result<[UniAddress : Data], KeychainError>) -> Void) {
+        guard !addresses.isEmpty else {
+            result(.success([:]))
+            return
+        }
+        switch addresses[0] {
+        case .bech(let address):
+            result(.failure(.avaAddressNotFound(address: address)))
+        case .eth(let address):
+            result(.failure(.ethAddressNotFound(address: address)))
+        }
     }
     
-    func signTx(tx: Any, address: AvalancheAddress, response: @escaping AvalancheKeychainCallback<Any>) {
+    public func signAva(data: Data, by addresses: [AvaAddress], result: (Result<[AvaAddress : Data], KeychainError>) -> Void) {
+        guard !addresses.isEmpty else {
+            result(.success([:]))
+            return
+        }
+        
+        result(.failure(.avaAddressNotFound(address: addresses[0])))
     }
     
-    func verify(message: Data, signature: Data, address: AvalancheAddress, response: @escaping AvalancheKeychainCallback<Bool>) {
-    }
-    
-    func mutate<R>(mutator: @escaping (AvalancheKeychainMutator) throws -> R) throws -> R {
-        fatalError()
-    }
-}
-
-class MockAvalancheEthereumKeychain: AvalancheEthereumKeychain {
-    func addresses(response: @escaping AvalancheKeychainCallback<[Data]>) {
-    }
-    
-    func sign(message: Data, address: Data, response: @escaping AvalancheKeychainCallback<Data>) {
-    }
-    
-    func signTx(tx: Any, address: Data, response: @escaping AvalancheKeychainCallback<Data>) {
-    }
-    
-    func signTypedData(tx: Any, address: Data, response: @escaping AvalancheKeychainCallback<Data>) {
-    }
-    
-    func verify(message: Data, signature: Data, address: Data, response: @escaping AvalancheKeychainCallback<Bool>) {
-    }
-    
-    func mutate<R>(mutator: @escaping (AvalancheEthereumKeychainMutator) throws -> R) throws -> R {
-        fatalError()
+    public func signEth<Addr>(data: Data, by addresses: [Addr], result: (Result<[Addr : Data], KeychainError>) -> Void) where Addr : EthAddress, Addr : Hashable {
+        guard !addresses.isEmpty else {
+            result(.success([:]))
+            return
+        }
+        
+        result(.failure(.ethAddressNotFound(address: addresses[0])))
     }
     
     
-}
-
-public class MockKeychainFactory: AvalancheKeychainFactory {
-    public init() {
-    }
-    
-    public func avaSecp256k1Keychain(hrp: String, chainId: String, chainAlias: String?) -> AvalancheKeychain {
-        return MockAvalancheKeychain()
-    }
-    
-    public func avaEthereumKeychain(network: AvalancheNetwork, chainId: UInt32) -> AvalancheEthereumKeychain {
-        return MockAvalancheEthereumKeychain()
-    }
 }
