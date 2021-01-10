@@ -6,7 +6,6 @@
 //
 
 import Foundation
-//import RPC
 
 public typealias AvalancheResponseCallback<R, E: Error> = (Result<R, E>) -> ()
 

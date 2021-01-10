@@ -1,5 +1,5 @@
 //
-//  File.swift
+//  Ethereum.swift
 //  
 //
 //  Created by Daniel Leping on 09/01/2021.

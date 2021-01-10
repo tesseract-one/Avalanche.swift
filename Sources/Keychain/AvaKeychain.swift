@@ -6,8 +6,9 @@
 //
 
 import Foundation
-
+#if !COCOAPODS
 import Avalanche
+#endif
 
 public class AvaKeychain {
     private var _x_main = [KeyPair]()

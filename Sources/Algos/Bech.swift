@@ -1,13 +1,14 @@
 //
-//  File.swift
+//  Bech.swift
 //  
 //
 //  Created by Daniel Leping on 08/01/2021.
 //
 
 import Foundation
-
+#if !COCOAPODS
 import Bech32
+#endif
 
 public enum Bech32Error: Error {
     case chainIdEmpty(address: String)

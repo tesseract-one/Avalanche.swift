@@ -1,9 +1,13 @@
 // Copyright Keefer Taylor, 2019.
-
-import Base58
 import XCTest
 
-class Base58SwiftTests: XCTestCase {
+#if !COCOAPODS
+@testable import Base58
+#else
+@testable import Avalanche
+#endif
+
+final class Base58SwiftTests: XCTestCase {
   /// Tuples of arbitrary strings that are mapped to valid Base58 encodings.
   private let validStringDecodedToEncodedTuples = [
     ("", ""),

@@ -1,5 +1,5 @@
 //
-//  File.swift
+//  Secp.swift
 //  
 //
 //  Created by Daniel Leping on 28/12/2020.
@@ -12,10 +12,7 @@ import CryptoSwift
 
 public struct SECP256K1 {
     static let context: OpaquePointer = {
-        var seed = Array<UInt8>(repeating: 0, count: 32)
-        guard SecRandomCopyBytes(kSecRandomDefault, seed.count, &seed) == 0 else {
-            fatalError("Can't obtain 32 bytes of random data")
-        }
+        var seed = try! Array.secureRandom(bytes: 32)
         let context = secp256k1_context_create(UInt32(SECP256K1_CONTEXT_SIGN|SECP256K1_CONTEXT_VERIFY))
         let _ = secp256k1_context_randomize(context!, &seed)
         return context!
@@ -148,22 +145,16 @@ public struct SECP256K1 {
         return response
     }
     
-    public static func randomSeed(size: Int) -> Data {
-        var seed = Array<UInt8>(repeating: 0, count: size)
-        guard SecRandomCopyBytes(kSecRandomDefault, seed.count, &seed) == 0 else {
-            fatalError("Can't obtain 32 bytes of random data")
-        }
-        return Data(seed)
-    }
-    
-    public static func generateKey(seed: Data = SECP256K1.randomSeed(size: 32)) -> Data? {
-        guard seed.count >= 16 else {return nil}
-        let hmac:Authenticator = HMAC(key: randomSeed(size: 32).bytes, variant: HMAC.Variant.sha512)
-        guard let entropy = try? hmac.authenticate(seed.bytes) else {return nil}
-        guard entropy.count == 64 else { return nil}
+    public static func generateKey(seed: Data? = nil) -> Data? {
+        guard let seed = (seed != nil ? seed : try? Data.secureRandom(bytes: 32)) else { return nil }
+        guard seed.count >= 16 else { return nil }
+        guard let key = try? Array.secureRandom(bytes: 32) else { return nil }
+        let hmac:Authenticator = HMAC(key: key, variant: HMAC.Variant.sha512)
+        guard let entropy = try? hmac.authenticate(seed.bytes) else { return nil }
+        guard entropy.count == 64 else { return nil }
         let I_L = entropy[0..<32]
         let privKeyCandidate = Data(I_L)
-        guard SECP256K1.verifyPrivateKey(privateKey: privKeyCandidate) else {return nil}
+        guard SECP256K1.verifyPrivateKey(privateKey: privKeyCandidate) else { return nil }
         
         return privKeyCandidate
     }

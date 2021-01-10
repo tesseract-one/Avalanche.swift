@@ -6,10 +6,11 @@
 //
 
 import Foundation
-
+#if !COCOAPODS
 import Avalanche
-import AvaAlgos
+import AvalancheAlgos
 import Base58
+#endif
 
 public struct KeyPair {
     public let priv: Data

@@ -65,6 +65,4 @@ extension EmptyKeychain: Keychain {
         
         result(.failure(.ethAddressNotFound(address: addresses[0])))
     }
-    
-    
 }

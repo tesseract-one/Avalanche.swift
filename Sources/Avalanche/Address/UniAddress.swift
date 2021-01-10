@@ -6,8 +6,9 @@
 //
 
 import Foundation
-
-import AvaAlgos
+#if !COCOAPODS
+import AvalancheAlgos
+#endif
 
 private struct EthAddressNoPub {
     public let eth: String

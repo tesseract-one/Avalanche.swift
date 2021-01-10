@@ -6,8 +6,9 @@
 //
 
 import Foundation
-
-import AvaAlgos
+#if !COCOAPODS
+import AvalancheAlgos
+#endif
 
 public struct AvaAddress {
     public let address: Address
